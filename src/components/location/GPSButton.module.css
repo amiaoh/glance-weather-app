@@ -4,7 +4,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: var(--bg-card);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);

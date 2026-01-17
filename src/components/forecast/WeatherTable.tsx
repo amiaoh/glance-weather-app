@@ -1,5 +1,7 @@
 import { Box, Table } from '@chakra-ui/react';
 import type { HourlyForecast, WeatherData } from '../../types/weather';
+import { RainIcon, ThermometerIcon, WindIcon } from './Icons';
+import { formatDate, formatDay, formatHour } from './formatters';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { WeatherIcon } from './WeatherIcon';
@@ -7,22 +9,6 @@ import { getWeatherInfo } from '../../utils/weatherCodeMapper';
 
 interface WeatherTableProps {
   data: WeatherData;
-}
-
-function formatHour(date: Date): string {
-  const hour = date.getHours();
-  if (hour === 0) return '12am';
-  if (hour === 12) return '12pm';
-  if (hour < 12) return `${hour}am`;
-  return `${hour - 12}pm`;
-}
-
-function formatDay(date: Date): string {
-  return date.toLocaleDateString('en-AU', { weekday: 'short' });
-}
-
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-AU', { day: 'numeric', month: 'numeric' });
 }
 
 function getUVColor(uv: number | null): string {
@@ -70,19 +56,6 @@ const cellStyles = {
   fontSize: 'xs',
 };
 
-const WindIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
-    <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
-    <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
-  </svg>
-);
-
-const RainIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-  </svg>
-);
 
 export function WeatherTable({ data }: WeatherTableProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -123,7 +96,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
       <Table.Cell
         key={hour.time.toISOString()}
         {...cellStyles}
-        bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+        bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
         fontWeight={isCurrent ? 'bold' : 'normal'}
       >
         {formatHour(hour.time)}
@@ -165,7 +138,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
           {/* Row 3: Temperature */}
           <Table.Row>
             <Table.Cell {...stickyColumnStyles} fontSize="xs" color="var(--text-secondary)">
-              Temp
+              <ThermometerIcon />
             </Table.Cell>
             {data.hourly.map((hour, index) => {
               const isCurrent = index === currentIndex;
@@ -173,7 +146,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`temp-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                   fontWeight="semibold"
                   fontSize="sm"
                 >
@@ -195,7 +168,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`icon-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                   title={weatherInfo.description}
                 >
                   <WeatherIcon code={hour.weatherCode} isDay={hour.isDay} size={24} />
@@ -209,7 +182,6 @@ export function WeatherTable({ data }: WeatherTableProps) {
             <Table.Cell {...stickyColumnStyles}>
               <Box display="flex" alignItems="center" gap="4px" color="var(--text-secondary)">
                 <WindIcon />
-                <Box fontSize="xs">km/h</Box>
               </Box>
             </Table.Cell>
             {data.hourly.map((hour, index) => {
@@ -218,7 +190,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`wind-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                   color="var(--text-secondary)"
                 >
                   {hour.windSpeed}
@@ -238,7 +210,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`uv-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                 >
                   <Box
                     display="inline-flex"
@@ -273,7 +245,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`rain-pct-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                   color="var(--rain-moderate)"
                   fontSize="10px"
                 >
@@ -295,7 +267,7 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 <Table.Cell
                   key={`rain-mm-${hour.time.toISOString()}`}
                   {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
+                  bg={isCurrent ? 'var(--bg-current-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
                   color="var(--rain-moderate)"
                   fontSize="10px"
                 >

@@ -78,7 +78,7 @@ export const DataCell = styled.td<DataCellProps>`
   padding: 4px 2px;
   font-size: var(--font-size-xs);
   background: ${({ $isCurrent, $isNight }) =>
-    $isCurrent ? 'var(--bg-card)' : $isNight ? 'rgba(0,0,0,0.1)' : 'transparent'};
+    $isCurrent ? 'var(--bg-current-card)' : $isNight ? 'rgba(0,0,0,0.1)' : 'transparent'};
   font-weight: ${({ $isCurrent }) => ($isCurrent ? 'bold' : 'normal')};
   border-bottom: ${({ $showDayMarker }) =>
     $showDayMarker ? '2px solid var(--accent)' : 'none'};

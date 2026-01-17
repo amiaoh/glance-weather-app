@@ -11,10 +11,10 @@ interface WeatherTableProps {
 
 function formatHour(date: Date): string {
   const hour = date.getHours();
-  if (hour === 0) return '12a';
-  if (hour === 12) return '12p';
-  if (hour < 12) return `${hour}a`;
-  return `${hour - 12}p`;
+  if (hour === 0) return '12am';
+  if (hour === 12) return '12pm';
+  if (hour < 12) return `${hour}am`;
+  return `${hour - 12}pm`;
 }
 
 function formatDay(date: Date): string {
@@ -145,9 +145,11 @@ export function WeatherTable({ data }: WeatherTableProps) {
     >
       <Table.Root size="sm" css={{ borderCollapse: 'separate', borderSpacing: 0 }}>
         <Table.Body>
-          {/* Row 1: Day/Date header */}
+          
+
+          {/* Row 2: Time */}
           <Table.Row>
-            <Table.Cell {...stickyColumnStyles}>
+            <Table.Cell {...stickyColumnStyles} fontSize="xs" color="var(--text-secondary)">
               <Box display="flex" flexDirection="column" alignItems="flex-start">
                 <Box fontSize="xs" fontWeight="bold" color="var(--accent)">
                   {formatDay(visibleDate)}
@@ -157,38 +159,12 @@ export function WeatherTable({ data }: WeatherTableProps) {
                 </Box>
               </Box>
             </Table.Cell>
-            {data.hourly.map((hour, index) => {
-              const showDayMarker = index === 0 ||
-                hour.time.toDateString() !== data.hourly[index - 1].time.toDateString();
-              const isCurrent = index === currentIndex;
-              return (
-                <Table.Cell
-                  key={`day-${hour.time.toISOString()}`}
-                  {...cellStyles}
-                  bg={isCurrent ? 'var(--bg-card)' : !hour.isDay ? 'rgba(0,0,0,0.1)' : 'transparent'}
-                  borderBottom={showDayMarker ? '2px solid var(--accent)' : 'none'}
-                >
-                  {showDayMarker && (
-                    <Box fontSize="9px" color="var(--accent)" fontWeight="bold">
-                      {formatDay(hour.time)}
-                    </Box>
-                  )}
-                </Table.Cell>
-              );
-            })}
-          </Table.Row>
-
-          {/* Row 2: Time */}
-          <Table.Row>
-            <Table.Cell {...stickyColumnStyles} fontSize="xs" color="var(--text-secondary)">
-              Time
-            </Table.Cell>
             {data.hourly.map(renderHourCell)}
           </Table.Row>
 
           {/* Row 3: Temperature */}
           <Table.Row>
-            <Table.Cell {...stickyColumnStyles} fontSize="xs" color="var(--text-primary)">
+            <Table.Cell {...stickyColumnStyles} fontSize="xs" color="var(--text-secondary)">
               Temp
             </Table.Cell>
             {data.hourly.map((hour, index) => {

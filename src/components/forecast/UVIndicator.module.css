@@ -1,0 +1,38 @@
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #000;
+}
+
+.none {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.low {
+  background: var(--uv-low);
+}
+
+.moderate {
+  background: var(--uv-moderate);
+}
+
+.high {
+  background: var(--uv-high);
+}
+
+.veryHigh {
+  background: var(--uv-very-high);
+  color: #fff;
+}
+
+.extreme {
+  background: var(--uv-extreme);
+  color: #fff;
+}

@@ -1,0 +1,53 @@
+:root {
+  /* Dark theme (default) */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #0f3460;
+  --bg-highlight: #1f4068;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #6b7280;
+  --accent: #e94560;
+  --border-color: rgba(255, 255, 255, 0.1);
+
+  /* UV Colors (WHO standard) */
+  --uv-low: #4CAF50;
+  --uv-moderate: #FFEB3B;
+  --uv-high: #FF9800;
+  --uv-very-high: #F44336;
+  --uv-extreme: #9C27B0;
+
+  /* Rain colors */
+  --rain-light: #64B5F6;
+  --rain-moderate: #42A5F5;
+  --rain-heavy: #1E88E5;
+
+  /* Spacing */
+  --column-width: 48px;
+  --row-gap: 4px;
+  --padding-xs: 4px;
+  --padding-sm: 8px;
+  --padding-md: 12px;
+  --header-height: 40px;
+
+  /* Typography */
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #e8e8e8;
+  --bg-highlight: #d0d0d0;
+  --text-primary: #1a1a2e;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border-color: rgba(0, 0, 0, 0.1);
+}

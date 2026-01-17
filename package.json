@@ -1,5 +1,5 @@
 {
-  "name": "vite-react",
+  "name": "glance-weather-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,18 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "arpansa-uv-data": "^1.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@vercel/node": "^5.5.23",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"

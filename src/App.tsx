@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { LocationProvider, useLocation } from './components/location/LocationContext';
+import { useWeatherData } from './hooks/useWeatherData';
+import { AppShell } from './components/layout/AppShell';
+import { Header } from './components/layout/Header';
+import { ForecastChart } from './components/forecast/ForecastChart';
+import styles from './App.module.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+function WeatherContent() {
+  const { city } = useLocation();
+  const { data, isLoading, error } = useWeatherData({
+    lat: city.lat,
+    lng: city.lng,
+    timezone: city.timezone,
+    arpansaCity: city.arpansaName,
+    cityName: city.name,
+  });
+
+  if (isLoading && !data) {
+    return (
+      <div className={styles.loading}>
+        <div className={styles.spinner} />
+        <span>Loading weather...</span>
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <div className={styles.error}>
+        <span>Failed to load weather data</span>
+        <span className={styles.errorDetail}>{error}</span>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header lastUpdated={data.lastUpdated} />
+      <ForecastChart data={data} />
+      {error && (
+        <div className={styles.staleWarning}>Using cached data - {error}</div>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <LocationProvider>
+      <AppShell>
+        <WeatherContent />
+      </AppShell>
+    </LocationProvider>
+  );
+}

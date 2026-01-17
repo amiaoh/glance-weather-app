@@ -1,0 +1,16 @@
+.wind {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.value {
+  min-width: 20px;
+  text-align: right;
+}

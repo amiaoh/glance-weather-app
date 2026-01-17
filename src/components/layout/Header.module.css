@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 var(--padding-sm);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-xs);
+}
+
+.updated {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}

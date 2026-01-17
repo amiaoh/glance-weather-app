@@ -1,6 +1,5 @@
-import { LocationSelector } from '../location/LocationSelector';
 import { GPSButton } from '../location/GPSButton';
-import { ThemeToggle } from '../settings/ThemeToggle';
+import { LocationSelector } from '../location/LocationSelector';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -12,9 +11,9 @@ function formatLastUpdated(date: Date): string {
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins === 1) return '1 min ago';
-  if (diffMins < 60) return `${diffMins} mins ago`;
+  if (diffMins < 1) return 'Updated just now';
+  if (diffMins === 1) return 'Updated 1 min ago';
+  if (diffMins < 60) return `Updated ${diffMins} mins ago`;
 
   return date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' });
 }
@@ -32,7 +31,6 @@ export function Header({ lastUpdated }: HeaderProps) {
             {formatLastUpdated(lastUpdated)}
           </span>
         )}
-        <ThemeToggle />
       </div>
     </header>
   );

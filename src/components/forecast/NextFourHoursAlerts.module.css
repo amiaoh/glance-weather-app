@@ -26,9 +26,17 @@
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.toggleButton:hover {
+/* Only apply hover on devices that support it (not touch) */
+@media (hover: hover) {
+  .toggleButton:hover {
+    background: var(--bg-highlight);
+  }
+}
+
+.toggleButton:active {
   background: var(--bg-highlight);
 }
 

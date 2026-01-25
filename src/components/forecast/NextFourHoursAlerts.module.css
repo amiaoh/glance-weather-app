@@ -3,10 +3,6 @@
   margin-top: var(--padding-sm);
 }
 
-.hasAlerts {
-  background: var(--bg-alerts);
-}
-
 .headerRow {
   display: flex;
   justify-content: space-between;

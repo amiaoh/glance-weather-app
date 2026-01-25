@@ -17,9 +17,6 @@
   background: var(--bg-now);
 }
 
-.maxCard {
-  background: var(--bg-max);
-}
 
 .cardLabel {
   font-size: var(--font-size-xs);

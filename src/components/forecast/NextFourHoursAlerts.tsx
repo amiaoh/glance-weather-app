@@ -1,8 +1,9 @@
+import { useMemo, useState } from "react";
+import { FaUmbrella, FaWind } from "react-icons/fa";
+import { TbJacket, TbUvIndex } from "react-icons/tb";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
-import { useMemo } from "react";
-import { FaWind } from "react-icons/fa";
-import { TbUvIndex } from "react-icons/tb";
+import { GiCorkHat } from "react-icons/gi";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from "./UVBadge";
@@ -98,7 +99,7 @@ interface WindAlert {
 }
 
 function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
-  const hoursWithUV = hours.filter((h) => h.uvIndex !== null && h.uvIndex > 3);
+  const hoursWithUV = hours.filter((h) => h.uvIndex !== null && h.uvIndex >= 3);
   if (hoursWithUV.length === 0) return null;
 
   let max = hoursWithUV[0];
@@ -172,7 +173,11 @@ const mockAlerts = {
   windAlert: { maxSpeed: 45, peakTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
 };
 
+type ViewMode = "simple" | "detailed";
+
 export function NextFourHoursAlerts({ data }: AlertsProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>("simple");
+
   const { uvAlert, rainAlert, windAlert, hasAlerts } = useMemo(() => {
     if (PREVIEW_MODE) {
       return { ...mockAlerts, hasAlerts: true };
@@ -191,6 +196,10 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
     };
   }, [data.hourly]);
 
+  const toggleView = () => {
+    setViewMode((prev) => (prev === "simple" ? "detailed" : "simple"));
+  };
+
   if (!hasAlerts) {
     return (
       <div className={styles.container}>
@@ -201,61 +210,87 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>Next 4 Hours</div>
-      <div className={styles.alertsGrid}>
-        {/* UV Alert */}
-        {uvAlert && (
-          <div className={`${styles.alertCard} ${getUVSeverityClass(uvAlert.maxUV)}`}>
-            <TbUvIndex className={styles.uvIcon} />
-            <div className={styles.alertContent}>
-              <UVBadge value={uvAlert.maxUV} />
-              <span className={styles.alertTime}>
-                at {formatHour(uvAlert.peakTime)}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Rain Alert */}
-        {rainAlert && (
-          <div className={`${styles.alertCard} ${getRainSeverityClass(rainAlert.level)}`}>
-            <WeatherIcon
-              code={rainAlert.weatherCode}
-              isDay={rainAlert.isDay}
-              size={28}
-            />
-            <div className={styles.alertContent}>
-              <span className={styles.rainValue}>
-                {rainAlert.totalMm.toFixed(1)}mm
-              </span>
-              <span className={styles.rainChance}>
-                {rainAlert.peakProbability}%
-              </span>
-            </div>
-            <span className={styles.rainLabel}>
-              {getRainLabel(rainAlert.level)}
-            </span>
-          </div>
-        )}
-
-        {/* Wind Alert */}
-        {windAlert && (
-          <div className={`${styles.alertCard} ${getWindSeverityClass(windAlert.level)}`}>
-            <FaWind className={styles.windIcon} />
-            <div className={styles.alertContent}>
-              <span className={styles.windValue}>
-                {Math.round(windAlert.maxSpeed)} km/h
-              </span>
-              <span className={styles.alertTime}>
-                at {formatHour(windAlert.peakTime)}
-              </span>
-            </div>
-            <span className={styles.windLabel}>
-              {getWindLabel(windAlert.level)}
-            </span>
-          </div>
-        )}
+      <div className={styles.headerRow}>
+        <div className={styles.header}>Next 4 Hours</div>
+        <button className={styles.toggleButton} onClick={toggleView}>
+          {viewMode === "simple" ? "Detailed view" : "Simple view"}
+        </button>
       </div>
+
+      {viewMode === "simple" ? (
+        <div className={styles.simpleGrid}>
+          {uvAlert && (
+            <div className={styles.simpleItem}>
+              <GiCorkHat className={styles.simpleIcon} />
+            </div>
+          )}
+          {rainAlert && (
+            <div className={styles.simpleItem}>
+              <FaUmbrella className={styles.simpleIcon} />
+            </div>
+          )}
+          {windAlert && (
+            <div className={styles.simpleItem}>
+              <TbJacket className={styles.simpleIcon} />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={styles.alertsGrid}>
+          {/* UV Alert */}
+          {uvAlert && (
+            <div className={`${styles.alertCard} ${getUVSeverityClass(uvAlert.maxUV)}`}>
+              <TbUvIndex className={styles.uvIcon} />
+              <div className={styles.alertContent}>
+                <UVBadge value={uvAlert.maxUV} />
+                <span className={styles.alertTime}>
+                  at {formatHour(uvAlert.peakTime)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Rain Alert */}
+          {rainAlert && (
+            <div className={`${styles.alertCard} ${getRainSeverityClass(rainAlert.level)}`}>
+              <WeatherIcon
+                code={rainAlert.weatherCode}
+                isDay={rainAlert.isDay}
+                size={28}
+              />
+              <div className={styles.alertContent}>
+                <span className={styles.rainValue}>
+                  {rainAlert.totalMm.toFixed(1)}mm
+                </span>
+                <span className={styles.rainChance}>
+                  {rainAlert.peakProbability}%
+                </span>
+              </div>
+              <span className={styles.rainLabel}>
+                {getRainLabel(rainAlert.level)}
+              </span>
+            </div>
+          )}
+
+          {/* Wind Alert */}
+          {windAlert && (
+            <div className={`${styles.alertCard} ${getWindSeverityClass(windAlert.level)}`}>
+              <FaWind className={styles.windIcon} />
+              <div className={styles.alertContent}>
+                <span className={styles.windValue}>
+                  {Math.round(windAlert.maxSpeed)} km/h
+                </span>
+                <span className={styles.alertTime}>
+                  at {formatHour(windAlert.peakTime)}
+                </span>
+              </div>
+              <span className={styles.windLabel}>
+                {getWindLabel(windAlert.level)}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

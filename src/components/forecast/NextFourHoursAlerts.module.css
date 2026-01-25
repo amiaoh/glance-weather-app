@@ -63,8 +63,40 @@
 }
 
 .simpleIcon {
-  font-size: 24px;
-  color: var(--text-secondary);
+  font-size: 50px;
+}
+
+/* Simple icon colors by severity */
+.iconDefault {
+  color: var(--text-muted);
+}
+
+.iconModerate {
+  color: var(--uv-moderate);
+}
+
+.iconHigh {
+  color: var(--uv-high);
+}
+
+.iconVeryHigh {
+  color: var(--uv-very-high);
+}
+
+.iconExtreme {
+  color: var(--uv-extreme);
+}
+
+.iconRainLight {
+  color: var(--rain-light);
+}
+
+.iconRainModerate {
+  color: var(--rain-moderate);
+}
+
+.iconRainHeavy {
+  color: var(--rain-heavy);
 }
 
 .simpleLabel {

@@ -68,6 +68,26 @@ function getWindSeverityClass(level: WindLevel): string {
   return styles.severityDefault;
 }
 
+// Icon color classes for simple view
+function getUVIconClass(uv: number): string {
+  if (uv >= 11) return styles.iconExtreme;
+  if (uv >= 8) return styles.iconVeryHigh;
+  if (uv >= 6) return styles.iconHigh;
+  return styles.iconModerate;
+}
+
+function getRainIconClass(level: RainLevel): string {
+  if (level === "heavy") return styles.iconRainHeavy;
+  if (level === "moderate") return styles.iconRainModerate;
+  return styles.iconRainLight;
+}
+
+function getWindIconClass(level: WindLevel): string {
+  if (level === "strong") return styles.iconVeryHigh;
+  if (level === "moderate") return styles.iconModerate;
+  return styles.iconDefault;
+}
+
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
   const now = new Date();
   // Start from the beginning of the current hour to include the current hour
@@ -249,23 +269,20 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <div className={styles.simpleGrid}>
           {uvAlert && (
             <div className={styles.simpleItem}>
-              <GiCorkHat className={styles.simpleIcon} />
+              <GiCorkHat className={`${styles.simpleIcon} ${getUVIconClass(uvAlert.uvValue)}`} />
               <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
-
             </div>
           )}
           {rainAlert && (
             <div className={styles.simpleItem}>
-              <FaUmbrella className={styles.simpleIcon} />
+              <FaUmbrella className={`${styles.simpleIcon} ${getRainIconClass(rainAlert.level)}`} />
               <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
-
             </div>
           )}
           {windAlert && (
             <div className={styles.simpleItem}>
-              <TbJacket className={styles.simpleIcon} />
+              <TbJacket className={`${styles.simpleIcon} ${getWindIconClass(windAlert.level)}`} />
               <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
-
             </div>
           )}
         </div>

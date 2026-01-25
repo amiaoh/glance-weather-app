@@ -15,18 +15,3 @@ export interface WeatherData {
   lastUpdated: Date;
   city: string;
 }
-
-export interface UVDataPoint {
-  time: string;
-  uvIndex: number;
-}
-
-export interface LocationState {
-  coordinates: { lat: number; lng: number } | null;
-  city: string;
-  arpansaCity: string;
-  timezone: string;
-  source: 'gps' | 'manual';
-  isLoading: boolean;
-  error: string | null;
-}

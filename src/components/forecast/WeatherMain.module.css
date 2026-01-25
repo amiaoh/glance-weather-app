@@ -1,0 +1,92 @@
+.container {
+  padding: var(--padding-sm);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--padding-sm);
+}
+
+.card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--padding-sm) var(--padding-md);
+}
+
+.cardLabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.cardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--padding-sm);
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timesRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.tempValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.uvIcon {
+  font-size: 20px;
+  color: var(--uv-high);
+}
+
+.peakTime {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) {
+  .card {
+    padding: var(--padding-xs) var(--padding-sm);
+  }
+
+  .tempValue {
+    font-size: 20px;
+  }
+
+  .uvIcon {
+    font-size: 18px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .tempValue {
+    font-size: 18px;
+  }
+
+  .uvIcon {
+    font-size: 16px;
+  }
+
+  .cardLabel {
+    font-size: 8px;
+  }
+
+  .peakTime {
+    font-size: 8px;
+  }
+}

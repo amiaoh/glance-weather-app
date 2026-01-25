@@ -22,9 +22,9 @@
 
 .cardContent {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: var(--padding-sm);
+  gap: var(--padding-md);
 }
 
 .metric {

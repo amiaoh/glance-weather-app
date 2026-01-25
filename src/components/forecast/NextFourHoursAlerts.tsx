@@ -211,14 +211,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
     }
 
     const nextFourHours = getNextFourHours(data.hourly);
-    console.log('[Alerts Debug] Next 4 hours:', nextFourHours.map(h => ({
-      hour: new Date(h.time).getHours(),
-      uvIndex: h.uvIndex,
-      time: h.time
-    })));
-
     const uv = analyzeUV(nextFourHours);
-    console.log('[Alerts Debug] UV Alert result:', uv);
 
     const rain = analyzeRain(nextFourHours);
     const wind = analyzeWind(nextFourHours);

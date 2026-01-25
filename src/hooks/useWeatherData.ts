@@ -82,18 +82,15 @@ export function useWeatherData({
 
       // Build UV lookup map
       const uvMap = new Map<number, number>();
-      console.log('[UV Debug] Raw UV response:', uvResponse);
       if (uvResponse?.data) {
         for (const entry of uvResponse.data) {
           // Parse time robustly - handles ISO format, space-separated, etc.
           const entryDate = new Date(entry.time);
-          console.log('[UV Debug] Entry:', entry.time, '-> hour:', entryDate.getHours(), 'uvIndex:', entry.uvIndex);
           if (!isNaN(entryDate.getTime())) {
             uvMap.set(entryDate.getHours(), entry.uvIndex);
           }
         }
       }
-      console.log('[UV Debug] UV Map:', Object.fromEntries(uvMap));
 
       // Transform to hourly forecast
       const hourly: HourlyForecast[] = weatherResponse.hourly.time.map((timeStr, i) => {

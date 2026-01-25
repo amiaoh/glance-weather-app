@@ -6,6 +6,7 @@ import { GiCorkHat } from "react-icons/gi";
 import { TbUvIndex } from "react-icons/tb";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
+import { UVBadge } from './UVBadge';
 
 interface AlertsProps {
   data: WeatherData;
@@ -26,27 +27,7 @@ function getRainLevel(totalMm: number): RainLevel {
   return "light";
 }
 
-function getUVSeverityClass(uv: number): string {
-  if (uv >= 11) return styles.severityExtreme;
-  if (uv >= 8) return styles.severityVeryHigh;
-  if (uv >= 6) return styles.severityHigh;
-  if (uv >= 3) return styles.severityModerate;
-  return styles.severityDefault;
-}
-
-function getRainSeverityClass(level: RainLevel): string {
-  if (level === "heavy") return styles.severityRainHeavy;
-  if (level === "moderate") return styles.severityRainModerate;
-  return styles.severityRainLight;
-}
-
-function getWindSeverityClass(level: WindLevel): string {
-  if (level === "strong") return styles.severityVeryHigh;
-  if (level === "moderate") return styles.severityModerate;
-  return styles.severityRainLight;
-}
-
-// Icon color classes for simple view
+// Icon color classes
 function getUVIconClass(uv: number): string {
   if (uv >= 11) return styles.iconExtreme;
   if (uv >= 8) return styles.iconVeryHigh;
@@ -190,7 +171,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
@@ -285,10 +266,9 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           {/* UV Alert */}
           {uvAlert && (
             <div className={styles.alertRow}>
-              <div className={`${styles.severityBar} ${getUVSeverityClass(uvAlert.uvValue)}`} />
               <TbUvIndex className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <span className={styles.alertValue}>UV {Math.round(uvAlert.uvValue)}</span>
+                <UVBadge value={uvAlert.uvValue} />
                 <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
               </div>
             </div>
@@ -297,8 +277,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           {/* Rain Alert */}
           {rainAlert && (
             <div className={styles.alertRow}>
-              <div className={`${styles.severityBar} ${getRainSeverityClass(rainAlert.level)}`} />
-              <FaUmbrella className={styles.alertIcon} />
+              <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
               <div className={styles.alertContent}>
                 <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
                 <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
@@ -309,8 +288,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           {/* Wind Alert */}
           {windAlert && (
             <div className={styles.alertRow}>
-              <div className={`${styles.severityBar} ${getWindSeverityClass(windAlert.level)}`} />
-              <FaWind className={styles.alertIcon} />
+              <FaWind className={`${styles.alertIcon} ${getWindIconClass(windAlert.level)}`} />
               <div className={styles.alertContent}>
                 <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
                 <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>

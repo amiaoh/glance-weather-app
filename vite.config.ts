@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
@@ -40,7 +40,7 @@ export default defineConfig({
       manifest: {
         name: 'Glance Weather',
         short_name: 'Glance',
-        description: '48-hour Australian weather forecast',
+        description: 'Minimalistic weather forecast',
         theme_color: '#1a1a2e',
         background_color: '#1a1a2e',
         display: 'standalone',

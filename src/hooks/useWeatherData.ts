@@ -137,5 +137,15 @@ export function useWeatherData({
     fetchData();
   }, [fetchData]);
 
+  // Auto-refresh every hour
+  useEffect(() => {
+    const ONE_HOUR = 60 * 60 * 1000;
+    const interval = setInterval(() => {
+      fetchData();
+    }, ONE_HOUR);
+
+    return () => clearInterval(interval);
+  }, [fetchData]);
+
   return { data, isLoading, error, refresh: fetchData };
 }

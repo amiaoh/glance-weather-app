@@ -116,6 +116,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
                 size={32}
               />
             </div>
+            <div className={styles.separator} />
             <div className={styles.metric}>
               <TbUvIndex className={styles.uvIcon} />
               <UVBadge value={currentHour.uvIndex} />
@@ -139,6 +140,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
                 />
               )}
             </div>
+            <div className={styles.separator} />
             <div className={styles.metric}>
               <TbUvIndex className={styles.uvIcon} />
               <UVBadge value={maxUV?.value ?? null} />

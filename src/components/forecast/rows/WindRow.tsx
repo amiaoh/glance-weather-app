@@ -1,6 +1,6 @@
+import { FaWind } from 'react-icons/fa';
 import type { HourlyForecast } from '../../../types/weather';
 import { StyledRow, LabelCell, WindCell, LabelContent } from '../styles';
-import { WindIcon } from '../Icons';
 
 interface WindRowProps {
   hourly: HourlyForecast[];
@@ -12,7 +12,7 @@ export function WindRow({ hourly, currentIndex }: WindRowProps) {
     <StyledRow>
       <LabelCell>
         <LabelContent>
-          <WindIcon />
+          <FaWind />
           <span>km/h</span>
         </LabelContent>
       </LabelCell>

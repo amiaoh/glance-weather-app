@@ -1,9 +1,10 @@
 import { LocationProvider, useLocation } from './components/location/LocationContext';
 
+import styles from './App.module.css';
+import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
+import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
 import { Header } from './components/layout/Header';
-import { WeatherTable } from './components/forecast/WeatherTable';
-import styles from './App.module.css';
 import { useWeatherData } from './hooks/useWeatherData';
 
 function WeatherContent() {
@@ -41,7 +42,9 @@ function WeatherContent() {
   return (
     <>
       <Header lastUpdated={data.lastUpdated} />
-      <WeatherTable data={data} />
+      <WeatherMain data={data} />
+      <NextFourHoursAlerts data={data} />
+
       {error && (
         <div className={styles.staleWarning}>Using cached data - {error}</div>
       )}

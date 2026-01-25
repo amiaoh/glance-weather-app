@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+import { FaCloudRain } from 'react-icons/fa';
 import type { HourlyForecast } from '../../../types/weather';
 import { StyledRow, LabelCell, RainCell, LabelContent } from '../styles';
-import { RainIcon } from '../Icons';
 
 interface RainRowsProps {
   hourly: HourlyForecast[];
@@ -17,7 +17,7 @@ export function RainPercentRow({ hourly, currentIndex }: RainRowsProps) {
     <StyledRow>
       <LabelCell>
         <LabelContent>
-          <RainIcon />
+          <FaCloudRain />
           <span>%</span>
         </LabelContent>
       </LabelCell>

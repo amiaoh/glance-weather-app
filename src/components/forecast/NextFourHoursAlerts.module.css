@@ -1,0 +1,140 @@
+.container {
+  padding: var(--padding-sm);
+  margin-top: var(--padding-sm);
+}
+
+.header {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--padding-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.noAlerts {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--padding-md);
+}
+
+.alertsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-sm);
+}
+
+.alertCard {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-sm);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--padding-sm) var(--padding-md);
+}
+
+/* Wind severity indicators */
+.windModerate {
+  border-left: 3px solid var(--uv-moderate);
+}
+
+.windStrong {
+  border-left: 3px solid var(--uv-very-high);
+}
+
+/* UV severity indicators */
+.uvHigh {
+  border-left: 3px solid var(--uv-high);
+}
+
+.uvVeryHigh {
+  border-left: 3px solid var(--uv-very-high);
+}
+
+.uvExtreme {
+  border-left: 3px solid var(--uv-extreme);
+}
+
+/* Rain severity indicators */
+.rainModerate {
+  border-left: 3px solid var(--rain-moderate);
+}
+
+.rainHeavy {
+  border-left: 3px solid var(--rain-heavy);
+}
+
+.alertContent {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-xs);
+  flex: 1;
+}
+
+.alertTime {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.uvIcon {
+  font-size: 28px;
+  color: var(--uv-high);
+  flex-shrink: 0;
+}
+
+.windIcon {
+  font-size: 24px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.rainValue {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--rain-moderate);
+}
+
+.rainChance {
+  font-size: var(--font-size-sm);
+  color: var(--rain-light);
+}
+
+.windValue {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.windLabel,
+.rainLabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* Landscape orientation - horizontal layout */
+@media (orientation: landscape) {
+  .alertsGrid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .alertCard {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .uvIcon,
+  .windIcon {
+    font-size: 20px;
+  }
+
+  .rainValue,
+  .windValue {
+    font-size: var(--font-size-sm);
+  }
+}

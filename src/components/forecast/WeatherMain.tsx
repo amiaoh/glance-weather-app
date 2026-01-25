@@ -64,7 +64,7 @@ function findMaxUV(hours: HourlyForecast[]): {
 }
 
 // Set to true to preview with mock data
-const PREVIEW_MODE = true;
+const PREVIEW_MODE = false;
 
 const mockCurrentHour = {
   temperature: 24,

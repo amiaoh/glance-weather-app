@@ -6,8 +6,6 @@ import type { HourlyForecast, WeatherData } from "../../types/weather";
 import { GiCorkHat } from "react-icons/gi";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
-import { UVBadge } from "./UVBadge";
-import { WeatherIcon } from "./WeatherIcon";
 
 interface AlertsProps {
   data: WeatherData;
@@ -51,22 +49,23 @@ function getRainLabel(level: RainLevel): string {
 }
 
 function getUVSeverityClass(uv: number): string {
-  if (uv >= 11) return styles.uvExtreme;
-  if (uv >= 8) return styles.uvVeryHigh;
-  if (uv >= 6) return styles.uvHigh;
-  return "";
+  if (uv >= 11) return styles.severityExtreme;
+  if (uv >= 8) return styles.severityVeryHigh;
+  if (uv >= 6) return styles.severityHigh;
+  if (uv >= 3) return styles.severityModerate;
+  return styles.severityDefault;
 }
 
 function getRainSeverityClass(level: RainLevel): string {
-  if (level === "heavy") return styles.rainHeavy;
-  if (level === "moderate") return styles.rainModerate;
-  return "";
+  if (level === "heavy") return styles.severityRainHeavy;
+  if (level === "moderate") return styles.severityRainModerate;
+  return styles.severityRainLight;
 }
 
 function getWindSeverityClass(level: WindLevel): string {
-  if (level === "strong") return styles.windStrong;
-  if (level === "moderate") return styles.windModerate;
-  return "";
+  if (level === "strong") return styles.severityVeryHigh;
+  if (level === "moderate") return styles.severityModerate;
+  return styles.severityDefault;
 }
 
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
@@ -281,57 +280,39 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <div className={styles.alertsGrid}>
           {/* UV Alert */}
           {uvAlert && (
-            <div className={`${styles.alertCard} ${getUVSeverityClass(uvAlert.uvValue)}`}>
-              <TbUvIndex className={styles.uvIcon} />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getUVSeverityClass(uvAlert.uvValue)}`} />
+              <TbUvIndex className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <UVBadge value={uvAlert.uvValue} />
-                <span className={styles.alertTime}>
-                  {formatAlertTime(uvAlert.alertTime)}
-                </span>
+                <span className={styles.alertValue}>UV {Math.round(uvAlert.uvValue)}</span>
+                <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
               </div>
             </div>
           )}
 
           {/* Rain Alert */}
           {rainAlert && (
-            <div className={`${styles.alertCard} ${getRainSeverityClass(rainAlert.level)}`}>
-              <WeatherIcon
-                code={rainAlert.weatherCode}
-                isDay={rainAlert.isDay}
-                size={28}
-              />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getRainSeverityClass(rainAlert.level)}`} />
+              <FaUmbrella className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <span className={styles.rainValue}>
-                  {rainAlert.totalMm.toFixed(1)}mm
-                </span>
-                <span className={styles.rainChance}>
-                  {rainAlert.precipitationProbability}%
-                </span>
-                <span className={styles.alertTime}>
-                  {formatAlertTime(rainAlert.alertTime)}
-                </span>
+                <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
+                <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
               </div>
-              <span className={styles.rainLabel}>
-                {getRainLabel(rainAlert.level)}
-              </span>
+              <span className={styles.alertLabel}>{getRainLabel(rainAlert.level)}</span>
             </div>
           )}
 
           {/* Wind Alert */}
           {windAlert && (
-            <div className={`${styles.alertCard} ${getWindSeverityClass(windAlert.level)}`}>
-              <FaWind className={styles.windIcon} />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getWindSeverityClass(windAlert.level)}`} />
+              <FaWind className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <span className={styles.windValue}>
-                  {Math.round(windAlert.speed)} km/h
-                </span>
-                <span className={styles.alertTime}>
-                  {formatAlertTime(windAlert.alertTime)}
-                </span>
+                <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
+                <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
               </div>
-              <span className={styles.windLabel}>
-                {getWindLabel(windAlert.level)}
-              </span>
+              <span className={styles.alertLabel}>{getWindLabel(windAlert.level)}</span>
             </div>
           )}
         </div>

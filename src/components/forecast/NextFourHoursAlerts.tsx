@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FaUmbrella, FaWind } from "react-icons/fa";
-import { TbJacket, TbUvIndex } from "react-icons/tb";
+import { TbUvIndex } from "react-icons/tb";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
 import { GiCorkHat } from "react-icons/gi";
@@ -275,7 +275,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           )}
           {windAlert && (
             <div className={styles.simpleItem}>
-              <TbJacket className={`${styles.simpleIcon} ${getWindIconClass(windAlert.level)}`} />
+              <FaWind className={`${styles.simpleIcon} ${getWindIconClass(windAlert.level)}`} />
               <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
             </div>
           )}

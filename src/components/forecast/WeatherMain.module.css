@@ -9,7 +9,16 @@
 }
 
 .card {
-  padding: var(--padding-xs) 0;
+  padding: var(--padding-sm);
+  border-radius: var(--radius-md);
+}
+
+.nowCard {
+  background: var(--bg-now);
+}
+
+.maxCard {
+  background: var(--bg-max);
 }
 
 .cardLabel {

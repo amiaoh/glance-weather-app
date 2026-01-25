@@ -171,7 +171,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = true;
+const PREVIEW_MODE = false;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },

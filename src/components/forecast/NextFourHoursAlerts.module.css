@@ -1,6 +1,9 @@
 .container {
   padding: var(--padding-sm);
   margin-top: var(--padding-sm);
+}
+
+.hasAlerts {
   background: var(--bg-alerts);
 }
 

@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { FaUmbrella, FaWind } from "react-icons/fa";
-import { TbUvIndex } from "react-icons/tb";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
 import { GiCorkHat } from "react-icons/gi";
+import { TbUvIndex } from "react-icons/tb";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
 
@@ -190,7 +190,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = true;
+const PREVIEW_MODE = false;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
@@ -235,7 +235,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${styles.hasAlerts}`}>
       <div className={styles.headerRow}>
         <div className={styles.header}>Alerts</div>
         <button className={styles.toggleButton} onClick={toggleView}>

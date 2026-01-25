@@ -235,7 +235,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
   }
 
   return (
-    <div className={`${styles.container} ${styles.hasAlerts}`}>
+    <div className={styles.container}>
       <div className={styles.headerRow}>
         <div className={styles.header}>Alerts</div>
         <button className={styles.toggleButton} onClick={toggleView}>

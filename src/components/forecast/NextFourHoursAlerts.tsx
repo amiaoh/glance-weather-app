@@ -20,32 +20,10 @@ function getWindLevel(speed: number): WindLevel {
   return "light";
 }
 
-function getWindLabel(level: WindLevel): string {
-  switch (level) {
-    case "strong":
-      return "Strong";
-    case "moderate":
-      return "Moderate";
-    default:
-      return "Light";
-  }
-}
-
 function getRainLevel(totalMm: number): RainLevel {
   if (totalMm >= 10) return "heavy";
   if (totalMm >= 2.5) return "moderate";
   return "light";
-}
-
-function getRainLabel(level: RainLevel): string {
-  switch (level) {
-    case "heavy":
-      return "Heavy";
-    case "moderate":
-      return "Moderate";
-    default:
-      return "Light";
-  }
 }
 
 function getUVSeverityClass(uv: number): string {
@@ -309,7 +287,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
                 <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
                 <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
               </div>
-              <span className={styles.alertLabel}>{getRainLabel(rainAlert.level)}</span>
             </div>
           )}
 
@@ -322,9 +299,24 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
                 <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
                 <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
               </div>
-              <span className={styles.alertLabel}>{getWindLabel(windAlert.level)}</span>
             </div>
           )}
+
+          {/* Legend */}
+          <div className={styles.legend}>
+            <div className={styles.legendItem}>
+              <div className={`${styles.legendDot} ${styles.severityDefault}`} />
+              <span className={styles.legendLabel}>Light</span>
+            </div>
+            <div className={styles.legendItem}>
+              <div className={`${styles.legendDot} ${styles.severityModerate}`} />
+              <span className={styles.legendLabel}>Moderate</span>
+            </div>
+            <div className={styles.legendItem}>
+              <div className={`${styles.legendDot} ${styles.severityVeryHigh}`} />
+              <span className={styles.legendLabel}>Strong</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

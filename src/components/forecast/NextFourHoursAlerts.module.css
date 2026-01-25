@@ -191,8 +191,29 @@
   color: var(--text-muted);
 }
 
-.alertLabel {
+/* Legend */
+.legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--padding-md);
+  padding-top: var(--padding-sm);
+  margin-top: var(--padding-xs);
+  border-top: 1px solid var(--border-color);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legendLabel {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
-  margin-left: auto;
 }

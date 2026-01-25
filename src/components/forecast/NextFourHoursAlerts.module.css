@@ -2,7 +2,6 @@
   padding: var(--padding-sm);
   margin-top: var(--padding-sm);
   background: var(--bg-alerts);
-  border-radius: var(--radius-md);
 }
 
 .headerRow {

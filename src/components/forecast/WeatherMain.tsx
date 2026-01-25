@@ -125,7 +125,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
         </div>
 
         {/* Max Card - Max Temp & UV */}
-        <div className={`${styles.card} ${styles.maxCard}`}>
+        <div className={`${styles.card}`}>
           <div className={styles.cardLabel}>Max</div>
           <div className={styles.cardContent}>
             <div className={styles.metric}>

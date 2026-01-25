@@ -193,7 +193,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
@@ -258,16 +258,22 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           {uvAlert && (
             <div className={styles.simpleItem}>
               <GiCorkHat className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
+
             </div>
           )}
           {rainAlert && (
             <div className={styles.simpleItem}>
               <FaUmbrella className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
+
             </div>
           )}
           {windAlert && (
             <div className={styles.simpleItem}>
               <TbJacket className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
+
             </div>
           )}
         </div>

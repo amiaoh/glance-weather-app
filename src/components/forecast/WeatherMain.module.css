@@ -35,6 +35,12 @@
   gap: 4px;
 }
 
+.timesRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
 .tempValue {
   font-size: 24px;
   font-weight: 600;

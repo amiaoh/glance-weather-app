@@ -63,10 +63,35 @@ function findMaxUV(hours: HourlyForecast[]): {
   };
 }
 
+// Set to true to preview with mock data
+const PREVIEW_MODE = true;
+
+const mockCurrentHour = {
+  temperature: 24,
+  weatherCode: 2,
+  isDay: true,
+  uvIndex: 6,
+};
+
+const mockMaxTemp = {
+  value: 32,
+  time: new Date(Date.now() + 3 * 60 * 60 * 1000),
+  weatherCode: 0,
+  isDay: true,
+};
+
+const mockMaxUV = {
+  value: 9,
+  time: new Date(Date.now() + 2 * 60 * 60 * 1000),
+};
+
 export function WeatherMain({ data }: WeatherMainProps) {
-  const currentHour = data.hourly[0];
+  const currentHour = PREVIEW_MODE ? mockCurrentHour : data.hourly[0];
 
   const { maxTemp, maxUV } = useMemo(() => {
+    if (PREVIEW_MODE) {
+      return { maxTemp: mockMaxTemp, maxUV: mockMaxUV };
+    }
     const remainingToday = getTodayRemainingHours(data.hourly);
     return {
       maxTemp: findMaxTemp(remainingToday),
@@ -113,22 +138,22 @@ export function WeatherMain({ data }: WeatherMainProps) {
                   size={32}
                 />
               )}
-              {maxTemp && (
-                <span className={styles.peakTime}>
-                  at {formatHour(maxTemp.time)}
-                </span>
-              )}
             </div>
             <div className={styles.metric}>
               <TbUvIndex className={styles.uvIcon} />
               <UVBadge value={maxUV?.value ?? null} />
-              {maxUV && (
-                <span className={styles.peakTime}>
-                  at {formatHour(maxUV.time)}
-                </span>
-              )}
             </div>
           </div>
+          {(maxTemp || maxUV) && (
+            <div className={styles.timesRow}>
+              <span className={styles.peakTime}>
+                {maxTemp ? `at ${formatHour(maxTemp.time)}` : ""}
+              </span>
+              <span className={styles.peakTime}>
+                {maxUV ? `at ${formatHour(maxUV.time)}` : ""}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

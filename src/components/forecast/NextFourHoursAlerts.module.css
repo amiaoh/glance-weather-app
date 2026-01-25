@@ -26,9 +26,17 @@
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.toggleButton:hover {
+/* Only apply hover on devices that support it (not touch) */
+@media (hover: hover) {
+  .toggleButton:hover {
+    background: var(--bg-highlight);
+  }
+}
+
+.toggleButton:active {
   background: var(--bg-highlight);
 }
 
@@ -39,27 +47,24 @@
   padding: var(--padding-md);
 }
 
-/* Simple view */
+/* Simple view - inline row of icons */
 .simpleGrid {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
   gap: var(--padding-md);
+  padding: var(--padding-xs) 0;
 }
 
 .simpleItem {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--padding-xs);
-  padding: var(--padding-md);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  min-width: 80px;
 }
 
 .simpleIcon {
-  font-size: 48px;
-  color: var(--text-primary);
+  font-size: 24px;
+  color: var(--text-secondary);
 }
 
 .simpleLabel {
@@ -68,57 +73,85 @@
   font-weight: 500;
 }
 
+/* Detailed view - full-width status bars */
 .alertsGrid {
   display: flex;
   flex-direction: column;
-  gap: var(--padding-sm);
+  gap: 0;
 }
 
-.alertCard {
+.alertRow {
   display: flex;
   align-items: center;
   gap: var(--padding-sm);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--padding-sm) var(--padding-md);
+  padding: var(--padding-sm) 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* Wind severity indicators */
-.windModerate {
-  border-left: 3px solid var(--uv-moderate);
+.alertRow:last-child {
+  border-bottom: none;
 }
 
-.windStrong {
-  border-left: 3px solid var(--uv-very-high);
+.severityBar {
+  width: 3px;
+  height: 24px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
-/* UV severity indicators */
-.uvHigh {
-  border-left: 3px solid var(--uv-high);
+/* Severity bar colors */
+.severityDefault {
+  background: var(--text-muted);
 }
 
-.uvVeryHigh {
-  border-left: 3px solid var(--uv-very-high);
+.severityModerate {
+  background: var(--uv-moderate);
 }
 
-.uvExtreme {
-  border-left: 3px solid var(--uv-extreme);
+.severityHigh {
+  background: var(--uv-high);
 }
 
-/* Rain severity indicators */
-.rainModerate {
-  border-left: 3px solid var(--rain-moderate);
+.severityVeryHigh {
+  background: var(--uv-very-high);
 }
 
-.rainHeavy {
-  border-left: 3px solid var(--rain-heavy);
+.severityExtreme {
+  background: var(--uv-extreme);
+}
+
+.severityRainLight {
+  background: var(--rain-light);
+}
+
+.severityRainModerate {
+  background: var(--rain-moderate);
+}
+
+.severityRainHeavy {
+  background: var(--rain-heavy);
+}
+
+.alertIcon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
 }
 
 .alertContent {
   display: flex;
   align-items: center;
-  gap: var(--padding-xs);
+  gap: var(--padding-sm);
   flex: 1;
+}
+
+.alertValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 50px;
 }
 
 .alertTime {
@@ -126,64 +159,8 @@
   color: var(--text-muted);
 }
 
-.uvIcon {
-  font-size: 28px;
-  color: var(--uv-high);
-  flex-shrink: 0;
-}
-
-.windIcon {
-  font-size: 24px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.rainValue {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--rain-moderate);
-}
-
-.rainChance {
-  font-size: var(--font-size-sm);
-  color: var(--rain-light);
-}
-
-.windValue {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.windLabel,
-.rainLabel {
+.alertLabel {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
   margin-left: auto;
-}
-
-/* Landscape orientation - horizontal layout */
-@media (orientation: landscape) {
-  .alertsGrid {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .alertCard {
-    flex: 1;
-    min-width: 120px;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 320px) {
-  .uvIcon,
-  .windIcon {
-    font-size: 20px;
-  }
-
-  .rainValue,
-  .windValue {
-    font-size: var(--font-size-sm);
-  }
 }

@@ -5,13 +5,11 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--padding-sm);
+  gap: var(--padding-md);
 }
 
 .card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--padding-sm) var(--padding-md);
+  padding: var(--padding-xs) 0;
 }
 
 .cardLabel {
@@ -24,15 +22,21 @@
 
 .cardContent {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: var(--padding-sm);
+  gap: var(--padding-md);
 }
 
 .metric {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
 }
 
 .timesRow {
@@ -59,10 +63,6 @@
 
 /* Landscape orientation */
 @media (orientation: landscape) {
-  .card {
-    padding: var(--padding-xs) var(--padding-sm);
-  }
-
   .tempValue {
     font-size: 20px;
   }

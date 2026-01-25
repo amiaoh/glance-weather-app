@@ -70,7 +70,9 @@ export function useWeatherData({
     setError(null);
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      // Use local date, not UTC (toISOString returns UTC which can be wrong date in AU)
+      const now = new Date();
+      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
       // Fetch weather and UV data in parallel
       const [weatherResponse, uvResponse] = await Promise.all([
@@ -82,8 +84,11 @@ export function useWeatherData({
       const uvMap = new Map<number, number>();
       if (uvResponse?.data) {
         for (const entry of uvResponse.data) {
-          const hour = parseInt(entry.time.split(' ')[1].split(':')[0], 10);
-          uvMap.set(hour, entry.uvIndex);
+          // Parse time robustly - handles ISO format, space-separated, etc.
+          const entryDate = new Date(entry.time);
+          if (!isNaN(entryDate.getTime())) {
+            uvMap.set(entryDate.getHours(), entry.uvIndex);
+          }
         }
       }
 

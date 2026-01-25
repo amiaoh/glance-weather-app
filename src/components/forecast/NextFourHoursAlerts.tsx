@@ -6,8 +6,6 @@ import type { HourlyForecast, WeatherData } from "../../types/weather";
 import { GiCorkHat } from "react-icons/gi";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
-import { UVBadge } from "./UVBadge";
-import { WeatherIcon } from "./WeatherIcon";
 
 interface AlertsProps {
   data: WeatherData;
@@ -51,126 +49,155 @@ function getRainLabel(level: RainLevel): string {
 }
 
 function getUVSeverityClass(uv: number): string {
-  if (uv >= 11) return styles.uvExtreme;
-  if (uv >= 8) return styles.uvVeryHigh;
-  if (uv >= 6) return styles.uvHigh;
-  return "";
+  if (uv >= 11) return styles.severityExtreme;
+  if (uv >= 8) return styles.severityVeryHigh;
+  if (uv >= 6) return styles.severityHigh;
+  if (uv >= 3) return styles.severityModerate;
+  return styles.severityDefault;
 }
 
 function getRainSeverityClass(level: RainLevel): string {
-  if (level === "heavy") return styles.rainHeavy;
-  if (level === "moderate") return styles.rainModerate;
-  return "";
+  if (level === "heavy") return styles.severityRainHeavy;
+  if (level === "moderate") return styles.severityRainModerate;
+  return styles.severityRainLight;
 }
 
 function getWindSeverityClass(level: WindLevel): string {
-  if (level === "strong") return styles.windStrong;
-  if (level === "moderate") return styles.windModerate;
-  return "";
+  if (level === "strong") return styles.severityVeryHigh;
+  if (level === "moderate") return styles.severityModerate;
+  return styles.severityDefault;
 }
 
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
   const now = new Date();
-  const fourHoursLater = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+  // Start from the beginning of the current hour to include the current hour
+  const currentHourStart = new Date(now);
+  currentHourStart.setMinutes(0, 0, 0);
+  const fourHoursLater = new Date(currentHourStart.getTime() + 4 * 60 * 60 * 1000);
 
   return hourly.filter((hour) => {
     const hourDate = new Date(hour.time);
-    return hourDate >= now && hourDate < fourHoursLater;
+    return hourDate >= currentHourStart && hourDate < fourHoursLater;
   });
 }
 
 interface UVAlert {
-  maxUV: number;
-  peakTime: Date;
+  uvValue: number;
+  alertTime: Date;
 }
 
 interface RainAlert {
   totalMm: number;
-  peakProbability: number;
+  alertTime: Date;
+  precipitationProbability: number;
   weatherCode: number;
   isDay: boolean;
   level: RainLevel;
 }
 
 interface WindAlert {
-  maxSpeed: number;
-  peakTime: Date;
+  speed: number;
+  alertTime: Date;
   level: WindLevel;
 }
 
-function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
-  const hoursWithUV = hours.filter((h) => h.uvIndex !== null && h.uvIndex >= 3);
-  if (hoursWithUV.length === 0) return null;
+function isCurrentHour(date: Date): boolean {
+  const now = new Date();
+  return (
+    date.getHours() === now.getHours() &&
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  );
+}
 
-  let max = hoursWithUV[0];
-  for (const hour of hoursWithUV) {
-    if ((hour.uvIndex ?? 0) > (max.uvIndex ?? 0)) {
-      max = hour;
-    }
-  }
+function formatAlertTime(date: Date): string {
+  if (isCurrentHour(date)) return "Now";
+  return `at ${formatHour(date)}`;
+}
+
+function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
+  // Find earliest hour where UV >= 3 (requires sun protection)
+  const sorted = [...hours].sort(
+    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
+  const earliest = sorted.find((h) => h.uvIndex !== null && h.uvIndex >= 3);
+
+  if (!earliest) return null;
 
   return {
-    maxUV: max.uvIndex!,
-    peakTime: max.time,
+    uvValue: earliest.uvIndex!,
+    alertTime: earliest.time,
   };
 }
 
 function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
+  // Filter hours with precipitation and sort by time
+  const hoursWithRain = hours.filter((h) => h.precipitation > 0);
+  if (hoursWithRain.length === 0) return null;
+
+  const sorted = [...hoursWithRain].sort(
+    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
+
+  // Find earliest moderate or heavier rain
+  const moderateOrHeavier = sorted.find(
+    (h) => getRainLevel(h.precipitation) !== "light"
+  );
+
+  // If no moderate+, use earliest light rain
+  const alertHour = moderateOrHeavier || sorted[0];
+  const level = getRainLevel(alertHour.precipitation);
+
+  // Calculate total for display
   const totalMm = hours.reduce((sum, h) => sum + h.precipitation, 0);
-  if (totalMm <= 0) return null;
-
-  let peakProbability = 0;
-  let worstWeatherCode = 0;
-  let worstIsDay = true;
-
-  for (const hour of hours) {
-    if (hour.precipitationProbability > peakProbability) {
-      peakProbability = hour.precipitationProbability;
-    }
-    // Higher weather codes generally indicate worse weather
-    if (hour.weatherCode > worstWeatherCode && hour.precipitation > 0) {
-      worstWeatherCode = hour.weatherCode;
-      worstIsDay = hour.isDay;
-    }
-  }
 
   return {
     totalMm,
-    peakProbability,
-    weatherCode: worstWeatherCode || 63, // Default to rain code
-    isDay: worstIsDay,
-    level: getRainLevel(totalMm),
+    alertTime: alertHour.time,
+    precipitationProbability: alertHour.precipitationProbability,
+    weatherCode: alertHour.weatherCode || 63,
+    isDay: alertHour.isDay,
+    level,
   };
 }
 
 function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   if (hours.length === 0) return null;
 
-  let max = hours[0];
-  for (const hour of hours) {
-    if (hour.windSpeed > max.windSpeed) {
-      max = hour;
-    }
-  }
+  // Sort by time
+  const sorted = [...hours].sort(
+    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
 
-  const level = getWindLevel(max.windSpeed);
-  // Only alert for moderate or strong winds
-  if (level === "light") return null;
+  // Find earliest moderate or stronger wind
+  const moderateOrStronger = sorted.find(
+    (h) => getWindLevel(h.windSpeed) !== "light"
+  );
+
+  // If no moderate+, find earliest light wind (if any notable wind)
+  // Only show light wind alert if there's at least some wind
+  const lightWind = sorted.find((h) => h.windSpeed >= 10);
+
+  const alertHour = moderateOrStronger || lightWind;
+  if (!alertHour) return null;
+
+  const level = getWindLevel(alertHour.windSpeed);
 
   return {
-    maxSpeed: max.windSpeed,
-    peakTime: max.time,
+    speed: alertHour.windSpeed,
+    alertTime: alertHour.time,
     level,
   };
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 const mockAlerts = {
-  uvAlert: { maxUV: 9, peakTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
-  rainAlert: { totalMm: 4.2, peakProbability: 80, weatherCode: 95, isDay: true, level: "moderate" as RainLevel },
-  windAlert: { maxSpeed: 45, peakTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
+  uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
+  rainAlert: { totalMm: 4.2, alertTime: new Date(Date.now() + 1 * 60 * 60 * 1000), precipitationProbability: 80, weatherCode: 95, isDay: true, level: "moderate" as RainLevel },
+  windAlert: { speed: 45, alertTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
 };
 
 type ViewMode = "simple" | "detailed";
@@ -185,6 +212,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
 
     const nextFourHours = getNextFourHours(data.hourly);
     const uv = analyzeUV(nextFourHours);
+
     const rain = analyzeRain(nextFourHours);
     const wind = analyzeWind(nextFourHours);
 
@@ -211,7 +239,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <div className={styles.header}>Next 4 Hours</div>
+        <div className={styles.header}>Alerts</div>
         <button className={styles.toggleButton} onClick={toggleView}>
           {viewMode === "simple" ? "Detailed view" : "Simple view"}
         </button>
@@ -222,16 +250,22 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           {uvAlert && (
             <div className={styles.simpleItem}>
               <GiCorkHat className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
+
             </div>
           )}
           {rainAlert && (
             <div className={styles.simpleItem}>
               <FaUmbrella className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
+
             </div>
           )}
           {windAlert && (
             <div className={styles.simpleItem}>
               <TbJacket className={styles.simpleIcon} />
+              <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
+
             </div>
           )}
         </div>
@@ -239,54 +273,39 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <div className={styles.alertsGrid}>
           {/* UV Alert */}
           {uvAlert && (
-            <div className={`${styles.alertCard} ${getUVSeverityClass(uvAlert.maxUV)}`}>
-              <TbUvIndex className={styles.uvIcon} />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getUVSeverityClass(uvAlert.uvValue)}`} />
+              <TbUvIndex className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <UVBadge value={uvAlert.maxUV} />
-                <span className={styles.alertTime}>
-                  at {formatHour(uvAlert.peakTime)}
-                </span>
+                <span className={styles.alertValue}>UV {Math.round(uvAlert.uvValue)}</span>
+                <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
               </div>
             </div>
           )}
 
           {/* Rain Alert */}
           {rainAlert && (
-            <div className={`${styles.alertCard} ${getRainSeverityClass(rainAlert.level)}`}>
-              <WeatherIcon
-                code={rainAlert.weatherCode}
-                isDay={rainAlert.isDay}
-                size={28}
-              />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getRainSeverityClass(rainAlert.level)}`} />
+              <FaUmbrella className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <span className={styles.rainValue}>
-                  {rainAlert.totalMm.toFixed(1)}mm
-                </span>
-                <span className={styles.rainChance}>
-                  {rainAlert.peakProbability}%
-                </span>
+                <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
+                <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
               </div>
-              <span className={styles.rainLabel}>
-                {getRainLabel(rainAlert.level)}
-              </span>
+              <span className={styles.alertLabel}>{getRainLabel(rainAlert.level)}</span>
             </div>
           )}
 
           {/* Wind Alert */}
           {windAlert && (
-            <div className={`${styles.alertCard} ${getWindSeverityClass(windAlert.level)}`}>
-              <FaWind className={styles.windIcon} />
+            <div className={styles.alertRow}>
+              <div className={`${styles.severityBar} ${getWindSeverityClass(windAlert.level)}`} />
+              <FaWind className={styles.alertIcon} />
               <div className={styles.alertContent}>
-                <span className={styles.windValue}>
-                  {Math.round(windAlert.maxSpeed)} km/h
-                </span>
-                <span className={styles.alertTime}>
-                  at {formatHour(windAlert.peakTime)}
-                </span>
+                <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
+                <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
               </div>
-              <span className={styles.windLabel}>
-                {getWindLabel(windAlert.level)}
-              </span>
+              <span className={styles.alertLabel}>{getWindLabel(windAlert.level)}</span>
             </div>
           )}
         </div>

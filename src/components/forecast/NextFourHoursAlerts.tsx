@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { FaUmbrella, FaWind } from "react-icons/fa";
+import { TbJacket, TbUvIndex } from "react-icons/tb";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
 import { GiCorkHat } from "react-icons/gi";
-import { TbJacket, TbUvIndex } from "react-icons/tb";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from "./UVBadge";
@@ -165,7 +165,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = true;
+const PREVIEW_MODE = false;
 
 const mockAlerts = {
   uvAlert: { maxUV: 9, peakTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },

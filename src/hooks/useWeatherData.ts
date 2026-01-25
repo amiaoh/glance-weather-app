@@ -137,14 +137,26 @@ export function useWeatherData({
     fetchData();
   }, [fetchData]);
 
-  // Auto-refresh every hour
+  // Auto-refresh when the hour changes
   useEffect(() => {
     const ONE_HOUR = 60 * 60 * 1000;
-    const interval = setInterval(() => {
-      fetchData();
-    }, ONE_HOUR);
+    let intervalId: ReturnType<typeof setInterval> | null = null;
 
-    return () => clearInterval(interval);
+    // Calculate ms until the next hour
+    const now = new Date();
+    const msUntilNextHour = (60 - now.getMinutes()) * 60 * 1000 - now.getSeconds() * 1000 - now.getMilliseconds();
+
+    // First timeout to sync with the hour change
+    const timeoutId = setTimeout(() => {
+      fetchData();
+      // Then refresh every hour after that
+      intervalId = setInterval(fetchData, ONE_HOUR);
+    }, msUntilNextHour);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [fetchData]);
 
   return { data, isLoading, error, refresh: fetchData };

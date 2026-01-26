@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 
+type BadgeSize = 'sm' | 'lg';
+
 interface UVBadgeProps {
   value: number | null;
+  size?: BadgeSize;
+  className?: string;
 }
 
 function getUVColor(uv: number | null): string {
@@ -19,22 +23,32 @@ function getUVTextColor(uv: number | null): string {
   return '#fff';
 }
 
-const Badge = styled.span<{ $bg: string; $color: string }>`
+const sizeStyles = {
+  sm: { minWidth: '20px', height: '16px', fontSize: '10px', borderRadius: '2px' },
+  lg: { minWidth: '50px', height: '50px', fontSize: '24px', borderRadius: '6px' },
+};
+
+const Badge = styled.span<{ $bg: string; $color: string; $size: BadgeSize }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 16px;
-  border-radius: 2px;
-  font-size: 10px;
+  min-width: ${({ $size }) => sizeStyles[$size].minWidth};
+  height: ${({ $size }) => sizeStyles[$size].height};
+  border-radius: ${({ $size }) => sizeStyles[$size].borderRadius};
+  font-size: ${({ $size }) => sizeStyles[$size].fontSize};
   font-weight: bold;
   background: ${({ $bg }) => $bg};
   color: ${({ $color }) => $color};
 `;
 
-export function UVBadge({ value }: UVBadgeProps) {
+export function UVBadge({ value, size = 'sm', className }: UVBadgeProps) {
   return (
-    <Badge $bg={getUVColor(value)} $color={getUVTextColor(value)}>
+    <Badge
+      $bg={getUVColor(value)}
+      $color={getUVTextColor(value)}
+      $size={size}
+      className={className}
+    >
       {value !== null ? Math.round(value) : '-'}
     </Badge>
   );

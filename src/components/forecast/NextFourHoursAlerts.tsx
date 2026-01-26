@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { FaUmbrella, FaWind } from "react-icons/fa";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
-import { GiCorkHat } from "react-icons/gi";
 import { TbUvIndex } from "react-icons/tb";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
@@ -25,14 +24,6 @@ function getRainLevel(totalMm: number): RainLevel {
   if (totalMm >= 10) return "heavy";
   if (totalMm >= 2.5) return "moderate";
   return "light";
-}
-
-// Icon color classes
-function getUVIconClass(uv: number): string {
-  if (uv >= 11) return styles.iconExtreme;
-  if (uv >= 8) return styles.iconVeryHigh;
-  if (uv >= 6) return styles.iconHigh;
-  return styles.iconModerate;
 }
 
 function getRainIconClass(level: RainLevel): string {
@@ -171,7 +162,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = true;
+const PREVIEW_MODE = false;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
@@ -203,7 +194,8 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
     };
   }, [data.hourly]);
 
-  const toggleView = () => {
+  const toggleView = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.blur(); // Remove focus to prevent sticky highlight on mobile
     setViewMode((prev) => (prev === "simple" ? "detailed" : "simple"));
   };
 
@@ -228,7 +220,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <div className={styles.simpleGrid}>
           {uvAlert && (
             <div className={styles.simpleItem}>
-              <GiCorkHat className={`${styles.simpleIcon} ${getUVIconClass(uvAlert.uvValue)}`} />
+              <UVBadge value={uvAlert.uvValue} size="lg" />
               <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
             </div>
           )}

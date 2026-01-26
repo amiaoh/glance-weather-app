@@ -27,6 +27,22 @@
   color: var(--text-secondary);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  touch-action: manipulation;
+}
+
+/* Reset focus state on touch devices - prevents sticky highlight */
+.toggleButton:focus {
+  outline: none;
+  background: var(--bg-secondary);
+}
+
+/* Show focus ring only for keyboard navigation */
+.toggleButton:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 2px;
 }
 
 /* Only apply hover on devices that support it (not touch) */

@@ -171,7 +171,7 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
@@ -222,22 +222,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <button className={styles.toggleButton} onClick={toggleView}>
           {viewMode === "simple" ? "Detailed view" : "Simple view"}
         </button>
-      </div>
-
-      {/* Legend */}
-      <div className={styles.legend}>
-        <div className={styles.legendItem}>
-          <div className={`${styles.legendDot} ${styles.severityRainLight}`} />
-          <span className={styles.legendLabel}>Light</span>
-        </div>
-        <div className={styles.legendItem}>
-          <div className={`${styles.legendDot} ${styles.severityModerate}`} />
-          <span className={styles.legendLabel}>Moderate</span>
-        </div>
-        <div className={styles.legendItem}>
-          <div className={`${styles.legendDot} ${styles.severityVeryHigh}`} />
-          <span className={styles.legendLabel}>Strong</span>
-        </div>
       </div>
 
       {viewMode === "simple" ? (

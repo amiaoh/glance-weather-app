@@ -98,11 +98,11 @@ export function WeatherMain({ data }: WeatherMainProps) {
       maxUV: findMaxUV(remainingToday),
     };
   }, [data.hourly]);
-const isMaxTempPast =
-  !!maxTemp && maxTemp.value <= currentHour.temperature;
+  const isMaxTempPast =
+    !!maxTemp && maxTemp.value <= currentHour.temperature;
   const isMaxUVPast =
     !!maxUV && maxUV.value <= currentHour.uvIndex!;
-    return (
+  return (
     <div className={styles.container}>
       <div className={styles.grid}>
         {/* Now Card - Current Temp & UV */}
@@ -131,35 +131,36 @@ const isMaxTempPast =
         <div className={`${styles.card}`}>
           <div className={styles.cardLabel}>Max</div>
           <div className={styles.cardContent}>
-            <div className={styles.metric}>
-              <span className={styles.tempValue}>
-                {!isMaxTempPast && maxTemp
-                  ? `${Math.round(maxTemp.value)}°`
-                  : "-"}</span>
-              {!isMaxTempPast && maxTemp && (
-                <WeatherIcon
-                  code={maxTemp.weatherCode}
-                  isDay={maxTemp.isDay}
-                  size={32}
-                />
-              )}
-            </div>
-            <div className={styles.separator} />
-            <div className={styles.metric}>
-              <TbUvIndex className={styles.uvIcon} />
-              <UVBadge value={!isMaxUVPast && maxUV ? maxUV.value : null} />
-            </div>
+            {!isMaxTempPast && maxTemp && (
+              <>
+                <div className={styles.metric}>
+                  <span className={styles.tempValue}>
+                    {`${Math.round(maxTemp.value)}°`}
+                  </span>
+                  <WeatherIcon
+                    code={maxTemp.weatherCode}
+                    isDay={maxTemp.isDay}
+                    size={32}
+                  />
+                </div>
+                <div className={styles.separator} />
+              </>
+            )}
+            {!isMaxUVPast && maxUV && (
+              <div className={styles.metric}>
+                <TbUvIndex className={styles.uvIcon} />
+                <UVBadge value={!isMaxUVPast && maxUV ? maxUV.value : null} />
+              </div>)}
           </div>
-          {(maxTemp || maxUV) && (
-            <div className={styles.timesRow}>
-              <span className={styles.peakTime}>
-                {maxTemp ? `at ${formatHour(maxTemp.time)}` : ""}
-              </span>
-              <span className={styles.peakTime}>
-                {maxUV ? `at ${formatHour(maxUV.time)}` : ""}
-              </span>
-            </div>
-          )}
+
+          <div className={styles.timesRow}>
+            {!isMaxTempPast && maxTemp && (<span className={styles.peakTime}>
+              {maxTemp ? `at ${formatHour(maxTemp.time)}` : ""}
+            </span>)}
+            {!isMaxUVPast && maxUV && (<span className={styles.peakTime}>
+              {maxUV ? `at ${formatHour(maxUV.time)}` : ""}
+            </span>)}
+          </div>
         </div>
       </div>
     </div>

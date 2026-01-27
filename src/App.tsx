@@ -9,7 +9,7 @@ import { useWeatherData } from './hooks/useWeatherData';
 
 function WeatherContent() {
   const { city } = useLocation();
-  const { data, isLoading, error } = useWeatherData({
+  const { data, isLoading, error, refresh } = useWeatherData({
     lat: city.lat,
     lng: city.lng,
     timezone: city.timezone,
@@ -41,7 +41,7 @@ function WeatherContent() {
 
   return (
     <>
-      <Header lastUpdated={data.lastUpdated} />
+      <Header lastUpdated={data.lastUpdated} onRefresh={refresh} isRefreshing={isLoading} />
       <WeatherMain data={data} />
       <NextFourHoursAlerts data={data} />
 

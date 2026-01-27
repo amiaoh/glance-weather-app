@@ -173,10 +173,9 @@
 }
 
 .alertIcon {
-  font-size: 20px;
+  font-size: 50px;
   color: var(--text-secondary);
   flex-shrink: 0;
-  width: 24px;
   text-align: center;
 }
 

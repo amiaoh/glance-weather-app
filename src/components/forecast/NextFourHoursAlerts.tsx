@@ -1,30 +1,12 @@
 import { FaUmbrella, FaWind } from "react-icons/fa";
-import type { HourlyForecast, WeatherData } from "../../types/weather";
+import { RainLevel, WeatherData, WindLevel } from '../../types/weather';
+import { analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours } from './forecast.utils';
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
-import { formatHour } from "./formatters";
+import { mockAlerts } from './mockData';
 import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from './UVBadge';
-
-interface AlertsProps {
-  data: WeatherData;
-}
-
-type WindLevel = "moderate" | "strong";
-type RainLevel = "light" | "moderate" | "heavy";
-
-function getWindLevel(speed: number): WindLevel | "light" {
-  if (speed >= 40) return "strong";
-  if (speed >= 20) return "moderate";
-  return "light";
-}
-
-function getRainLevel(totalMm: number): RainLevel {
-  if (totalMm >= 10) return "heavy";
-  if (totalMm >= 2.5) return "moderate";
-  return "light";
-}
 
 function getRainIconClass(level: RainLevel): string {
   if (level === "heavy") return styles.iconVeryHigh;
@@ -37,130 +19,12 @@ function getWindIconClass(level: WindLevel): string {
   return styles.iconModerate;
 }
 
-function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
-  const now = new Date();
-  // Start from the beginning of the current hour to include the current hour
-  const currentHourStart = new Date(now);
-  currentHourStart.setMinutes(0, 0, 0);
-  const fourHoursLater = new Date(currentHourStart.getTime() + 4 * 60 * 60 * 1000);
-
-  return hourly.filter((hour) => {
-    const hourDate = new Date(hour.time);
-    return hourDate >= currentHourStart && hourDate < fourHoursLater;
-  });
-}
-
-interface UVAlert {
-  uvValue: number;
-  alertTime: Date;
-}
-
-interface RainAlert {
-  totalMm: number;
-  alertTime: Date;
-  precipitationProbability: number;
-  weatherCode: number;
-  isDay: boolean;
-  level: RainLevel;
-}
-
-interface WindAlert {
-  speed: number;
-  alertTime: Date;
-  level: WindLevel;
-}
-
-function isCurrentHour(date: Date): boolean {
-  const now = new Date();
-  return (
-    date.getHours() === now.getHours() &&
-    date.getDate() === now.getDate() &&
-    date.getMonth() === now.getMonth() &&
-    date.getFullYear() === now.getFullYear()
-  );
-}
-
-function formatAlertTime(date: Date): string {
-  if (isCurrentHour(date)) return "Now";
-  return `at ${formatHour(date)}`;
-}
-
-function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
-  // Find earliest hour where UV >= 3 (requires sun protection)
-  const sorted = [...hours].sort(
-    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-  );
-  const earliest = sorted.find((h) => h.uvIndex !== null && h.uvIndex >= 3);
-
-  if (!earliest) return null;
-
-  return {
-    uvValue: earliest.uvIndex!,
-    alertTime: earliest.time,
-  };
-}
-
-function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
-  // Filter hours with precipitation and sort by time
-  const hoursWithRain = hours.filter((h) => h.precipitation > 0);
-  if (hoursWithRain.length === 0) return null;
-
-  const sorted = [...hoursWithRain].sort(
-    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-  );
-
-  // Find earliest moderate or heavier rain
-  const moderateOrHeavier = sorted.find(
-    (h) => getRainLevel(h.precipitation) !== "light"
-  );
-
-  // If no moderate+, use earliest light rain
-  const alertHour = moderateOrHeavier || sorted[0];
-  const level = getRainLevel(alertHour.precipitation);
-
-  // Calculate total for display
-  const totalMm = hours.reduce((sum, h) => sum + h.precipitation, 0);
-
-  return {
-    totalMm,
-    alertTime: alertHour.time,
-    precipitationProbability: alertHour.precipitationProbability,
-    weatherCode: alertHour.weatherCode || 63,
-    isDay: alertHour.isDay,
-    level,
-  };
-}
-
-function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
-  if (hours.length === 0) return null;
-
-  // Sort by time
-  const sorted = [...hours].sort(
-    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-  );
-
-  // Find earliest moderate or stronger wind
-  const alertHour = sorted.find(
-    (h) => getWindLevel(h.windSpeed) !== "light"
-  );
-
-  if (!alertHour) return null;
-
-  return {
-    speed: alertHour.windSpeed,
-    alertTime: alertHour.time,
-    level: getWindLevel(alertHour.windSpeed) as WindLevel,
-  };
+interface AlertsProps {
+  data: WeatherData;
 }
 
 // Set to true to preview all alert states
 const PREVIEW_MODE = false;
-
-const mockAlerts = {
-  uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
-  rainAlert: { totalMm: 4.2, alertTime: new Date(Date.now() + 1 * 60 * 60 * 1000), precipitationProbability: 80, weatherCode: 95, isDay: true, level: "light" as RainLevel },
-  windAlert: { speed: 45, alertTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
-};
 
 
 export function NextFourHoursAlerts({ data }: AlertsProps) {

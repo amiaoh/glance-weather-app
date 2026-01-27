@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useGeolocation } from '../../hooks/useGeolocation';
 import { DEFAULT_CITY, getCityByName, type CityData } from '../../utils/cityCoordinates';
 import { findNearestCity } from '../../utils/nearestCity';
-import { useGeolocation } from '../../hooks/useGeolocation';
 
 interface LocationContextValue {
   city: CityData;

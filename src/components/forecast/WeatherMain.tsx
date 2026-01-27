@@ -1,7 +1,9 @@
-import type { HourlyForecast, WeatherData } from "../../types/weather";
+import { findMaxTemp, findMaxUV, getTodayRemainingHours } from './forecast.utils';
+import { mockCurrentHour, mockMaxTemp, mockMaxUV } from './mockData';
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
+import type { WeatherData } from "../../types/weather";
 import { formatHour } from "./formatters";
 import { UVBadge } from "./UVBadge";
 import { WeatherIcon } from "./WeatherIcon";
@@ -11,79 +13,8 @@ interface WeatherMainProps {
   data: WeatherData;
 }
 
-function getTodayRemainingHours(hourly: HourlyForecast[]): HourlyForecast[] {
-  const now = new Date();
-  const todayEnd = new Date(now);
-  todayEnd.setHours(23, 59, 59, 999);
-
-  return hourly.filter((hour) => {
-    const hourDate = new Date(hour.time);
-    return hourDate >= now && hourDate <= todayEnd;
-  });
-}
-
-function findMaxTemp(hours: HourlyForecast[]): {
-  value: number;
-  time: Date;
-  weatherCode: number;
-  isDay: boolean;
-} | null {
-  if (hours.length === 0) return null;
-
-  let max = hours[0];
-  for (const hour of hours) {
-    if (hour.temperature > max.temperature) {
-      max = hour;
-    }
-  }
-  return {
-    value: max.temperature,
-    time: max.time,
-    weatherCode: max.weatherCode,
-    isDay: max.isDay,
-  };
-}
-
-function findMaxUV(hours: HourlyForecast[]): {
-  value: number;
-  time: Date;
-} | null {
-  const hoursWithUV = hours.filter((h) => h.uvIndex !== null);
-  if (hoursWithUV.length === 0) return null;
-
-  let max = hoursWithUV[0];
-  for (const hour of hoursWithUV) {
-    if ((hour.uvIndex ?? 0) > (max.uvIndex ?? 0)) {
-      max = hour;
-    }
-  }
-  return {
-    value: max.uvIndex!,
-    time: max.time,
-  };
-}
-
 // Set to true to preview with mock data
 const PREVIEW_MODE = false;
-
-const mockCurrentHour = {
-  temperature: 24,
-  weatherCode: 2,
-  isDay: true,
-  uvIndex: 6,
-};
-
-const mockMaxTemp = {
-  value: 32,
-  time: new Date(Date.now() + 3 * 60 * 60 * 1000),
-  weatherCode: 0,
-  isDay: true,
-};
-
-const mockMaxUV = {
-  value: 9,
-  time: new Date(Date.now() + 2 * 60 * 60 * 1000),
-};
 
 export function WeatherMain({ data }: WeatherMainProps) {
   const currentHour = PREVIEW_MODE ? mockCurrentHour : data.hourly[0];

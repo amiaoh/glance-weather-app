@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
 import { FaUmbrella, FaWind } from "react-icons/fa";
 import type { HourlyForecast, WeatherData } from "../../types/weather";
 
+import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
 import { formatHour } from "./formatters";
 import styles from "./NextFourHoursAlerts.module.css";
@@ -170,10 +170,8 @@ const mockAlerts = {
   windAlert: { speed: 45, alertTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
 };
 
-type ViewMode = "simple" | "detailed";
 
 export function NextFourHoursAlerts({ data }: AlertsProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("simple");
 
   const { uvAlert, rainAlert, windAlert, hasAlerts } = useMemo(() => {
     if (PREVIEW_MODE) {
@@ -194,10 +192,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
     };
   }, [data.hourly]);
 
-  const toggleView = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.blur(); // Remove focus to prevent sticky highlight on mobile
-    setViewMode((prev) => (prev === "simple" ? "detailed" : "simple"));
-  };
 
   if (!hasAlerts) {
     return (
@@ -211,68 +205,41 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
     <div className={styles.container}>
       <div className={styles.headerRow}>
         <div className={styles.header}>Alerts</div>
-        <button className={styles.toggleButton} onClick={toggleView}>
-          {viewMode === "simple" ? "Detailed view" : "Simple view"}
-        </button>
       </div>
-
-      {viewMode === "simple" ? (
-        <div className={styles.simpleGrid}>
-          {uvAlert && (
-            <div className={styles.simpleItem}>
-              <UVBadge value={uvAlert.uvValue} size="lg" />
+      <div className={styles.alertsGrid}>
+        {/* UV Alert */}
+        {uvAlert && (
+          <div className={styles.alertRow}>
+            <TbUvIndex className={styles.alertIcon} />
+            <div className={styles.alertContent}>
+              <UVBadge value={uvAlert.uvValue} />
               <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
             </div>
-          )}
-          {rainAlert && (
-            <div className={styles.simpleItem}>
-              <FaUmbrella className={`${styles.simpleIcon} ${getRainIconClass(rainAlert.level)}`} />
+          </div>
+        )}
+
+        {/* Rain Alert */}
+        {rainAlert && (
+          <div className={styles.alertRow}>
+            <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
+            <div className={styles.alertContent}>
+              <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
               <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
             </div>
-          )}
-          {windAlert && (
-            <div className={styles.simpleItem}>
-              <FaWind className={`${styles.simpleIcon} ${getWindIconClass(windAlert.level)}`} />
+          </div>
+        )}
+
+        {/* Wind Alert */}
+        {windAlert && (
+          <div className={styles.alertRow}>
+            <FaWind className={`${styles.alertIcon} ${getWindIconClass(windAlert.level)}`} />
+            <div className={styles.alertContent}>
+              <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
               <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
             </div>
-          )}
-        </div>
-      ) : (
-        <div className={styles.alertsGrid}>
-          {/* UV Alert */}
-          {uvAlert && (
-            <div className={styles.alertRow}>
-              <TbUvIndex className={styles.alertIcon} />
-              <div className={styles.alertContent}>
-                <UVBadge value={uvAlert.uvValue} />
-                <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Rain Alert */}
-          {rainAlert && (
-            <div className={styles.alertRow}>
-              <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
-              <div className={styles.alertContent}>
-                <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
-                <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Wind Alert */}
-          {windAlert && (
-            <div className={styles.alertRow}>
-              <FaWind className={`${styles.alertIcon} ${getWindIconClass(windAlert.level)}`} />
-              <div className={styles.alertContent}>
-                <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
-                <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

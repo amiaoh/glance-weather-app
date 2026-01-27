@@ -19,7 +19,7 @@
 
 
 .cardLabel {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -52,7 +52,7 @@
 }
 
 .tempValue {
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 600;
   color: var(--text-primary);
 }

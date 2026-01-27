@@ -11,10 +11,10 @@ interface AlertsProps {
   data: WeatherData;
 }
 
-type WindLevel = "light" | "moderate" | "strong";
+type WindLevel = "moderate" | "strong";
 type RainLevel = "light" | "moderate" | "heavy";
 
-function getWindLevel(speed: number): WindLevel {
+function getWindLevel(speed: number): WindLevel | "light" {
   if (speed >= 40) return "strong";
   if (speed >= 20) return "moderate";
   return "light";
@@ -34,8 +34,7 @@ function getRainIconClass(level: RainLevel): string {
 
 function getWindIconClass(level: WindLevel): string {
   if (level === "strong") return styles.iconVeryHigh;
-  if (level === "moderate") return styles.iconModerate;
-  return styles.iconLight;
+  return styles.iconModerate;
 }
 
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
@@ -141,23 +140,16 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   );
 
   // Find earliest moderate or stronger wind
-  const moderateOrStronger = sorted.find(
+  const alertHour = sorted.find(
     (h) => getWindLevel(h.windSpeed) !== "light"
   );
 
-  // If no moderate+, find earliest light wind (if any notable wind)
-  // Only show light wind alert if there's at least some wind
-  const lightWind = sorted.find((h) => h.windSpeed >= 10);
-
-  const alertHour = moderateOrStronger || lightWind;
   if (!alertHour) return null;
-
-  const level = getWindLevel(alertHour.windSpeed);
 
   return {
     speed: alertHour.windSpeed,
     alertTime: alertHour.time,
-    level,
+    level: getWindLevel(alertHour.windSpeed) as WindLevel,
   };
 }
 
@@ -224,6 +216,8 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
             <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
             <div className={styles.alertContent}>
               <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
+              <span className={styles.alertValue}>{rainAlert.precipitationProbability.toFixed(1)}%</span>
+
               <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
             </div>
           </div>

@@ -98,8 +98,11 @@ export function WeatherMain({ data }: WeatherMainProps) {
       maxUV: findMaxUV(remainingToday),
     };
   }, [data.hourly]);
-
-  return (
+const isMaxTempPast =
+  !!maxTemp && maxTemp.value <= currentHour.temperature;
+  const isMaxUVPast =
+    !!maxUV && maxUV.value <= currentHour.uvIndex!;
+    return (
     <div className={styles.container}>
       <div className={styles.grid}>
         {/* Now Card - Current Temp & UV */}
@@ -130,9 +133,10 @@ export function WeatherMain({ data }: WeatherMainProps) {
           <div className={styles.cardContent}>
             <div className={styles.metric}>
               <span className={styles.tempValue}>
-                {maxTemp ? `${Math.round(maxTemp.value)}°` : "-"}
-              </span>
-              {maxTemp && (
+                {!isMaxTempPast && maxTemp
+                  ? `${Math.round(maxTemp.value)}°`
+                  : "-"}</span>
+              {!isMaxTempPast && maxTemp && (
                 <WeatherIcon
                   code={maxTemp.weatherCode}
                   isDay={maxTemp.isDay}
@@ -143,7 +147,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
             <div className={styles.separator} />
             <div className={styles.metric}>
               <TbUvIndex className={styles.uvIcon} />
-              <UVBadge value={maxUV?.value ?? null} />
+              <UVBadge value={!isMaxUVPast && maxUV ? maxUV.value : null} />
             </div>
           </div>
           {(maxTemp || maxUV) && (

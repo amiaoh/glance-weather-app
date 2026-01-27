@@ -27,15 +27,15 @@ function getRainLevel(totalMm: number): RainLevel {
 }
 
 function getRainIconClass(level: RainLevel): string {
-  if (level === "heavy") return styles.iconRainHeavy;
-  if (level === "moderate") return styles.iconRainModerate;
-  return styles.iconRainLight;
+  if (level === "heavy") return styles.iconVeryHigh;
+  if (level === "moderate") return styles.iconModerate;
+  return styles.iconLight;
 }
 
 function getWindIconClass(level: WindLevel): string {
   if (level === "strong") return styles.iconVeryHigh;
   if (level === "moderate") return styles.iconModerate;
-  return styles.iconRainLight;
+  return styles.iconLight;
 }
 
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
@@ -162,11 +162,11 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
 }
 
 // Set to true to preview all alert states
-const PREVIEW_MODE = false;
+const PREVIEW_MODE = true;
 
 const mockAlerts = {
   uvAlert: { uvValue: 9, alertTime: new Date(Date.now() + 2 * 60 * 60 * 1000) },
-  rainAlert: { totalMm: 4.2, alertTime: new Date(Date.now() + 1 * 60 * 60 * 1000), precipitationProbability: 80, weatherCode: 95, isDay: true, level: "moderate" as RainLevel },
+  rainAlert: { totalMm: 4.2, alertTime: new Date(Date.now() + 1 * 60 * 60 * 1000), precipitationProbability: 80, weatherCode: 95, isDay: true, level: "light" as RainLevel },
   windAlert: { speed: 45, alertTime: new Date(Date.now() + 3 * 60 * 60 * 1000), level: "strong" as WindLevel },
 };
 

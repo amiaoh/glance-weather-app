@@ -103,16 +103,8 @@
   color: var(--uv-extreme);
 }
 
-.iconRainLight {
+.iconLight {
   color: var(--rain-light);
-}
-
-.iconRainModerate {
-  color: var(--rain-moderate);
-}
-
-.iconRainHeavy {
-  color: var(--rain-heavy);
 }
 
 .simpleLabel {

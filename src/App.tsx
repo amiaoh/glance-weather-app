@@ -1,10 +1,10 @@
-import { LocationProvider, useLocation } from './components/location/LocationContext';
-
 import styles from './App.module.css';
 import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
 import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
 import { Header } from './components/layout/Header';
+import { LocationProvider } from './components/location/LocationContext';
+import { useLocation } from './hooks/useLocation';
 import { useWeatherData } from './hooks/useWeatherData';
 
 function WeatherContent() {

@@ -1,18 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { DEFAULT_CITY, getCityByName, type CityData } from '../../utils/cityCoordinates';
 import { findNearestCity } from '../../utils/nearestCity';
-
-interface LocationContextValue {
-  city: CityData;
-  source: 'gps' | 'manual';
-  isLocating: boolean;
-  locationError: string | null;
-  setCity: (cityName: string) => void;
-  detectLocation: () => void;
-}
-
-const LocationContext = createContext<LocationContextValue | null>(null);
+import { LocationContext } from './location.types';
 
 const LOCATION_KEY = 'glance-weather-location';
 
@@ -68,10 +58,4 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useLocation() {
-  const context = useContext(LocationContext);
-  if (!context) {
-    throw new Error('useLocation must be used within LocationProvider');
-  }
-  return context;
-}
+

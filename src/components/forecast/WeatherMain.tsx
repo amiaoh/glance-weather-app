@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
 import type { WeatherData } from "../../types/weather";
 import { formatHour } from "./formatters";
+import { InformativeText } from './InformativeText';
 import { UVBadge } from "./UVBadge";
 import { WeatherIcon } from "./WeatherIcon";
 import styles from "./WeatherMain.module.css";
@@ -30,9 +31,9 @@ export function WeatherMain({ data }: WeatherMainProps) {
     };
   }, [data.hourly]);
   const isMaxTempPast =
-    !!maxTemp && maxTemp.value <= currentHour.temperature;
+    !maxTemp || maxTemp.value <= currentHour.temperature;
   const isMaxUVPast =
-    !!maxUV && maxUV.value <= currentHour.uvIndex!;
+    !maxUV || maxUV.value <= currentHour.uvIndex!;
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
@@ -59,39 +60,52 @@ export function WeatherMain({ data }: WeatherMainProps) {
         </div>
 
         {/* Max Card - Max Temp & UV */}
-        <div className={`${styles.card}`}>
+        <div className={styles.card}>
           <div className={styles.cardLabel}>Max</div>
-          <div className={styles.cardContent}>
-            {!isMaxTempPast && maxTemp && (
-              <>
-                <div className={styles.metric}>
-                  <span className={styles.tempValue}>
-                    {`${Math.round(maxTemp.value)}°`}
-                  </span>
-                  <WeatherIcon
-                    code={maxTemp.weatherCode}
-                    isDay={maxTemp.isDay}
-                    size={32}
-                  />
-                </div>
-                <div className={styles.separator} />
-              </>
-            )}
-            {!isMaxUVPast && maxUV && (
-              <div className={styles.metric}>
-                <TbUvIndex className={styles.uvIcon} />
-                <UVBadge value={!isMaxUVPast && maxUV ? maxUV.value : null} />
-              </div>)}
-          </div>
 
-          <div className={styles.timesRow}>
-            {!isMaxTempPast && maxTemp && (<span className={styles.peakTime}>
-              {maxTemp ? `at ${formatHour(maxTemp.time)}` : ""}
-            </span>)}
-            {!isMaxUVPast && maxUV && (<span className={styles.peakTime}>
-              {maxUV ? `at ${formatHour(maxUV.time)}` : ""}
-            </span>)}
-          </div>
+          {isMaxTempPast && isMaxUVPast ? (
+            <InformativeText paddingTop={"1em"}>Same as now</InformativeText>
+          ) : (
+            <>
+              <div className={styles.cardContent}>
+                {!isMaxTempPast && maxTemp && (
+                  <>
+                    <div className={styles.metric}>
+                      <span className={styles.tempValue}>
+                        {`${Math.round(maxTemp.value)}°`}
+                      </span>
+                      <WeatherIcon
+                        code={maxTemp.weatherCode}
+                        isDay={maxTemp.isDay}
+                        size={32}
+                      />
+                    </div>
+                    <div className={styles.separator} />
+                  </>
+                )}
+
+                {!isMaxUVPast && maxUV && (
+                  <div className={styles.metric}>
+                    <TbUvIndex className={styles.uvIcon} />
+                    <UVBadge value={maxUV?.value ?? null} />
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.timesRow}>
+                {!isMaxTempPast && maxTemp && (
+                  <span className={styles.peakTime}>
+                    {`at ${formatHour(maxTemp.time)}`}
+                  </span>
+                )}
+                {!isMaxUVPast && maxUV && (
+                  <span className={styles.peakTime}>
+                    {`at ${formatHour(maxUV.time)}`}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

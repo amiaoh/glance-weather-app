@@ -5,7 +5,12 @@
       "Bash(npx tsc:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm run build:*)",
+      "Bash(git -C /Users/miaoh/github-personal/glance-weather-app status)",
+      "Bash(git -C /Users/miaoh/github-personal/glance-weather-app diff)",
+      "Bash(git -C /Users/miaoh/github-personal/glance-weather-app log --oneline -5)",
+      "Bash(git -C /Users/miaoh/github-personal/glance-weather-app add src/App.tsx src/components/forecast/NextFourHoursAlerts.tsx src/components/forecast/WeatherMain.tsx src/components/layout/AppShell.tsx src/components/layout/Header.tsx src/components/location/location.types.ts CLAUDE.md)"
     ]
   }
 }

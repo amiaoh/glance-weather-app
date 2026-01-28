@@ -4,6 +4,7 @@ import { analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours 
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
+import { InformativeText } from './InformativeText';
 import { mockAlerts } from './mockData';
 import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from './UVBadge';
@@ -52,7 +53,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
   if (!hasAlerts) {
     return (
       <div className={styles.container}>
-        <div className={styles.noAlerts}>No alerts for the next 4 hours</div>
+        <InformativeText textAlign={"center"}>No alerts for the next 4 hours</InformativeText>
       </div>
     );
   }

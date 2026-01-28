@@ -1,3 +1,4 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -8,12 +9,12 @@ interface HeaderProps {
 
 export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
   return (
-    <header className={styles.header}>
-      <div className={styles.right}>
+    <Box as="header" className={styles.header}>
+      <Flex className={styles.right}>
         {lastUpdated && (
-          <span className={styles.updated} title={`Last updated: ${lastUpdated.toLocaleString()}`}>
+          <Text className={styles.updated} title={`Last updated: ${lastUpdated.toLocaleString()}`}>
             {`Last updated at ${lastUpdated.getTime().toString() === 'Invalid Date' ? '' : lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-          </span>
+          </Text>
         )}
         <button
           className={`${styles.refreshButton} ${isRefreshing ? styles.spinning : ''}`}
@@ -24,8 +25,8 @@ export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
         >
           ↻
         </button>
-      </div>
+      </Flex>
       {/* placeholder for About section */}
-    </header>
+    </Box>
   );
 }

@@ -1,3 +1,4 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
 import styles from './App.module.css';
 import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
 import { WeatherMain } from './components/forecast/WeatherMain';
@@ -19,19 +20,19 @@ function WeatherContent() {
 
   if (isLoading && !data) {
     return (
-      <div className={styles.loading}>
-        <div className={styles.spinner} />
-        <span>Loading weather...</span>
-      </div>
+      <Flex className={styles.loading}>
+        <Box className={styles.spinner} />
+        <Text>Loading weather...</Text>
+      </Flex>
     );
   }
 
   if (error && !data) {
     return (
-      <div className={styles.error}>
-        <span>Failed to load weather data</span>
-        <span className={styles.errorDetail}>{error}</span>
-      </div>
+      <Flex className={styles.error}>
+        <Text>Failed to load weather data</Text>
+        <Text className={styles.errorDetail}>{error}</Text>
+      </Flex>
     );
   }
 
@@ -46,7 +47,7 @@ function WeatherContent() {
       <NextFourHoursAlerts data={data} />
 
       {error && (
-        <div className={styles.staleWarning}>Using cached data - {error}</div>
+        <Box className={styles.staleWarning}>Using cached data - {error}</Box>
       )}
     </>
   );

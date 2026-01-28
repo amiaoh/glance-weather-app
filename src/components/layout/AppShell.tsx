@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Box } from '@chakra-ui/react';
 import styles from './AppShell.module.css';
 
 interface AppShellProps {
@@ -6,5 +7,5 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  return <div className={styles.shell}>{children}</div>;
+  return <Box className={styles.shell}>{children}</Box>;
 }

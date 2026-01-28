@@ -4,6 +4,7 @@ import { analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours 
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
+import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import { InformativeText } from './InformativeText';
 import { mockAlerts } from './mockData';
 import styles from "./NextFourHoursAlerts.module.css";
@@ -52,53 +53,53 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
 
   if (!hasAlerts) {
     return (
-      <div className={styles.container}>
+      <Box className={styles.container}>
         <InformativeText textAlign={"center"}>No alerts for the next 4 hours</InformativeText>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headerRow}>
-        <div className={styles.header}>Alerts</div>
-      </div>
-      <div className={styles.alertsGrid}>
+    <Box className={styles.container}>
+      <Flex className={styles.headerRow}>
+        <Text className={styles.header}>Alerts</Text>
+      </Flex>
+      <Grid className={styles.alertsGrid}>
         {/* UV Alert */}
         {uvAlert && (
-          <div className={styles.alertRow}>
+          <Flex className={styles.alertRow}>
             <TbUvIndex className={styles.alertIcon} />
-            <div className={styles.alertContent}>
+            <Flex className={styles.alertContent}>
               <UVBadge value={uvAlert.uvValue} />
-              <span className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</span>
-            </div>
-          </div>
+              <Text className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</Text>
+            </Flex>
+          </Flex>
         )}
 
         {/* Rain Alert */}
         {rainAlert && (
-          <div className={styles.alertRow}>
+          <Flex className={styles.alertRow}>
             <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
-            <div className={styles.alertContent}>
-              <span className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</span>
-              <span className={styles.alertValue}>{rainAlert.precipitationProbability.toFixed(1)}%</span>
+            <Flex className={styles.alertContent}>
+              <Text className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</Text>
+              <Text className={styles.alertValue}>{rainAlert.precipitationProbability.toFixed(1)}%</Text>
 
-              <span className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</span>
-            </div>
-          </div>
+              <Text className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</Text>
+            </Flex>
+          </Flex>
         )}
 
         {/* Wind Alert */}
         {windAlert && (
-          <div className={styles.alertRow}>
+          <Flex className={styles.alertRow}>
             <FaWind className={`${styles.alertIcon} ${getWindIconClass(windAlert.level)}`} />
-            <div className={styles.alertContent}>
-              <span className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</span>
-              <span className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</span>
-            </div>
-          </div>
+            <Flex className={styles.alertContent}>
+              <Text className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</Text>
+              <Text className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</Text>
+            </Flex>
+          </Flex>
         )}
-      </div>
-    </div>
+      </Grid>
+    </Box>
   );
 }

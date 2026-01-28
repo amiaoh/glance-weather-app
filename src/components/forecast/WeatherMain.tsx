@@ -1,3 +1,4 @@
+import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import { findMaxTemp, findMaxUV, getTodayRemainingHours } from './forecast.utils';
 import { mockCurrentHour, mockMaxTemp, mockMaxUV } from './mockData';
 
@@ -35,79 +36,79 @@ export function WeatherMain({ data }: WeatherMainProps) {
   const isMaxUVPast =
     !maxUV || maxUV.value <= currentHour.uvIndex!;
   return (
-    <div className={styles.container}>
-      <div className={styles.grid}>
+    <Box className={styles.container}>
+      <Grid className={styles.grid}>
         {/* Now Card - Current Temp & UV */}
-        <div className={`${styles.card} ${styles.nowCard}`}>
-          <div className={styles.cardLabel}>Now</div>
-          <div className={styles.cardContent}>
-            <div className={styles.metric}>
-              <span className={styles.tempValue}>
+        <Box className={`${styles.card} ${styles.nowCard}`}>
+          <Text className={styles.cardLabel}>Now</Text>
+          <Flex className={styles.cardContent}>
+            <Flex className={styles.metric}>
+              <Text className={styles.tempValue}>
                 {Math.round(currentHour.temperature)}°
-              </span>
+              </Text>
               <WeatherIcon
                 code={currentHour.weatherCode}
                 isDay={currentHour.isDay}
                 size={32}
               />
-            </div>
-            <div className={styles.separator} />
-            <div className={styles.metric}>
+            </Flex>
+            <Box className={styles.separator} />
+            <Flex className={styles.metric}>
               <TbUvIndex className={styles.uvIcon} />
               <UVBadge value={currentHour.uvIndex} />
-            </div>
-          </div>
-        </div>
+            </Flex>
+          </Flex>
+        </Box>
 
         {/* Max Card - Max Temp & UV */}
-        <div className={styles.card}>
-          <div className={styles.cardLabel}>Max</div>
+        <Box className={styles.card}>
+          <Text className={styles.cardLabel}>Max</Text>
 
           {isMaxTempPast && isMaxUVPast ? (
             <InformativeText paddingTop={"1em"}>Same as now</InformativeText>
           ) : (
             <>
-              <div className={styles.cardContent}>
+              <Flex className={styles.cardContent}>
                 {!isMaxTempPast && maxTemp && (
                   <>
-                    <div className={styles.metric}>
-                      <span className={styles.tempValue}>
+                    <Flex className={styles.metric}>
+                      <Text className={styles.tempValue}>
                         {`${Math.round(maxTemp.value)}°`}
-                      </span>
+                      </Text>
                       <WeatherIcon
                         code={maxTemp.weatherCode}
                         isDay={maxTemp.isDay}
                         size={32}
                       />
-                    </div>
-                    <div className={styles.separator} />
+                    </Flex>
+                    <Box className={styles.separator} />
                   </>
                 )}
 
                 {!isMaxUVPast && maxUV && (
-                  <div className={styles.metric}>
+                  <Flex className={styles.metric}>
                     <TbUvIndex className={styles.uvIcon} />
                     <UVBadge value={maxUV?.value ?? null} />
-                  </div>
+                  </Flex>
                 )}
-              </div>
+              </Flex>
 
-              <div className={styles.timesRow}>
+              <Flex className={styles.timesRow}>
                 {!isMaxTempPast && maxTemp && (
-                  <span className={styles.peakTime}>
+                  <Text className={styles.peakTime}>
                     {`at ${formatHour(maxTemp.time)}`}
-                  </span>
+                  </Text>
                 )}
                 {!isMaxUVPast && maxUV && (
-                  <span className={styles.peakTime}>
+                  <Text className={styles.peakTime}>
                     {`at ${formatHour(maxUV.time)}`}
-                  </span>
+                  </Text>
                 )}
-              </div>
+              </Flex>
             </>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Grid>
+    </Box>
   );
 }

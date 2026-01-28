@@ -12,4 +12,4 @@ interface LocationContextValue {
 
 const LocationContext = createContext<LocationContextValue | null>(null);
 
-export { LocationContext, LocationContextValue };
+export { LocationContext, type LocationContextValue };

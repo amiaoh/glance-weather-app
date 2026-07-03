@@ -18,102 +18,19 @@
   letter-spacing: 0.5px;
 }
 
-.toggleButton {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
-  font-size: var(--font-size-xs);
-  color: var(--text-secondary);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  touch-action: manipulation;
-}
-
-/* Reset focus state on touch devices - prevents sticky highlight */
-.toggleButton:focus {
-  outline: none;
-  background: var(--bg-secondary);
-}
-
-/* Show focus ring only for keyboard navigation */
-.toggleButton:focus-visible {
-  outline: 2px solid var(--text-secondary);
-  outline-offset: 2px;
-}
-
-/* Only apply hover on devices that support it (not touch) */
-@media (hover: hover) {
-  .toggleButton:hover {
-    background: var(--bg-highlight);
-  }
-}
-
-.toggleButton:active {
-  background: var(--bg-highlight);
-}
-
-.noAlerts {
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-  text-align: center;
-  padding: var(--padding-md);
-}
-
-/* Simple view - inline row of icons */
-.simpleGrid {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: var(--padding-md);
-  padding: var(--padding-xs) 0;
-}
-
-.simpleItem {
-  display: flex;
-  align-items: center;
-  gap: var(--padding-xs);
-}
-
-.simpleIcon {
-  font-size: 50px;
-}
-
-/* Simple icon colors by severity */
-.iconDefault {
-  color: var(--text-muted);
-}
-
+/* Icon colors by severity (used by getRainIconClass/getWindIconClass) */
 .iconModerate {
   color: var(--uv-moderate);
-}
-
-.iconHigh {
-  color: var(--uv-high);
 }
 
 .iconVeryHigh {
   color: var(--uv-very-high);
 }
 
-.iconExtreme {
-  color: var(--uv-extreme);
-}
-
 .iconLight {
   color: var(--rain-light);
 }
 
-.simpleLabel {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-/* Detailed view - full-width status bars */
 .alertsGrid {
   display: flex;
   flex-direction: column;
@@ -130,46 +47,6 @@
 
 .alertRow:last-child {
   border-bottom: none;
-}
-
-.severityBar {
-  width: 3px;
-  height: 24px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-/* Severity bar colors */
-.severityDefault {
-  background: var(--text-muted);
-}
-
-.severityModerate {
-  background: var(--uv-moderate);
-}
-
-.severityHigh {
-  background: var(--uv-high);
-}
-
-.severityVeryHigh {
-  background: var(--uv-very-high);
-}
-
-.severityExtreme {
-  background: var(--uv-extreme);
-}
-
-.severityRainLight {
-  background: var(--rain-light);
-}
-
-.severityRainModerate {
-  background: var(--rain-moderate);
-}
-
-.severityRainHeavy {
-  background: var(--rain-heavy);
 }
 
 .alertIcon {
@@ -194,31 +71,6 @@
 }
 
 .alertTime {
-  font-size: var(--font-size-xs);
-  color: var(--text-muted);
-}
-
-/* Legend */
-.legend {
-  display: flex;
-  justify-content: flex-start;
-  gap: var(--padding-md);
-  margin-bottom: var(--padding-sm);
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.legendLabel {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
 }

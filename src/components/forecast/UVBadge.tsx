@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { Box } from '@chakra-ui/react';
 
 type BadgeSize = 'sm' | 'lg';
 
@@ -24,32 +24,23 @@ function getUVTextColor(uv: number | null): string {
 }
 
 const sizeStyles = {
-  sm: { minWidth: '20px', height: '16px', fontSize: '10px', borderRadius: '2px' },
-  lg: { minWidth: '50px', height: '50px', fontSize: '24px', borderRadius: '6px' },
+  sm: { minW: '20px', h: '16px', fontSize: '10px', borderRadius: '2px' },
+  lg: { minW: '50px', h: '50px', fontSize: '24px', borderRadius: '6px' },
 };
-
-const Badge = styled.span<{ $bg: string; $color: string; $size: BadgeSize }>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: ${({ $size }) => sizeStyles[$size].minWidth};
-  height: ${({ $size }) => sizeStyles[$size].height};
-  border-radius: ${({ $size }) => sizeStyles[$size].borderRadius};
-  font-size: ${({ $size }) => sizeStyles[$size].fontSize};
-  font-weight: bold;
-  background: ${({ $bg }) => $bg};
-  color: ${({ $color }) => $color};
-`;
 
 export function UVBadge({ value, size = 'sm', className }: UVBadgeProps) {
   return (
-    <Badge
-      $bg={getUVColor(value)}
-      $color={getUVTextColor(value)}
-      $size={size}
+    <Box
       className={className}
+      display="inline-flex"
+      alignItems="center"
+      justifyContent="center"
+      fontWeight="bold"
+      bg={getUVColor(value)}
+      color={getUVTextColor(value)}
+      {...sizeStyles[size]}
     >
       {value !== null ? Math.round(value) : '-'}
-    </Badge>
+    </Box>
   );
 }

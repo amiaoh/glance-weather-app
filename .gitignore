@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+
+# Vite temp config snapshots (written on every config reload)
+vite.config.ts.timestamp-*.mjs
+*.tsbuildinfo

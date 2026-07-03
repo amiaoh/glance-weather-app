@@ -4,4 +4,12 @@
   height: 100%;
   max-height: 100vh;
   overflow: hidden;
+  background: var(--bg-primary);
+}
+
+@media (min-width: 480px) {
+  .shell {
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  }
 }

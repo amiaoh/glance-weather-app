@@ -1,4 +1,4 @@
-export type { HourlyForecast, RainAlert, RainLevel, UVAlert, WeatherData, WindAlert, WindLevel };
+export type { GearLevel, GearRecommendation, HourlyForecast, RainAlert, RainLevel, UVAlert, WeatherData, WindAlert, WindLevel };
 
  interface HourlyForecast {
   time: Date;
@@ -39,5 +39,13 @@ interface WindAlert {
   speed: number;
   alertTime: Date;
   level: WindLevel;
+}
+
+type GearLevel = "none" | "sun" | "umbrella" | "wet-weather-gear" | "windbreaker";
+
+interface GearRecommendation {
+  level: GearLevel;
+  label: string;
+  detail: string;
 }
 

@@ -8,6 +8,7 @@
   --text-secondary: #555555;
   --text-muted: #888888;
   --border-color: rgba(0, 0, 0, 0.1);
+  --accent: #e94560;
 
   /* UV Colors (WHO standard) */
   --uv-low: #4CAF50;

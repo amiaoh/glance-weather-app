@@ -21,6 +21,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Desktop/tablet: present the app as a centered widget rather than
+   stretching the phone-first layout to fill the browser window. */
+@media (min-width: 480px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d7d9e2;
+  }
+
+  #root {
+    width: 400px;
+    height: min(800px, 92vh);
+  }
+}
+
 button {
   font-family: inherit;
   cursor: pointer;

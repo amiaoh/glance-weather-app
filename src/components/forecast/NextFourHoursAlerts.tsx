@@ -1,11 +1,11 @@
 import { FaUmbrella, FaWind } from "react-icons/fa";
 import { RainLevel, WeatherData, WindLevel } from '../../types/weather';
-import { analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours } from './forecast.utils';
+import { analyzeGear, analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours } from './forecast.utils';
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
 import { Box, Flex, Grid, Text } from "@chakra-ui/react";
-import { InformativeText } from './InformativeText';
+import { GearRecommendation } from './GearRecommendation';
 import { mockAlerts } from './mockData';
 import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from './UVBadge';
@@ -31,9 +31,14 @@ const PREVIEW_MODE = false;
 
 export function NextFourHoursAlerts({ data }: AlertsProps) {
 
-  const { uvAlert, rainAlert, windAlert, hasAlerts } = useMemo(() => {
+  const { uvAlert, rainAlert, windAlert, hasAlerts, gear } = useMemo(() => {
     if (PREVIEW_MODE) {
-      return { ...mockAlerts, hasAlerts: true };
+      const { uvAlert, rainAlert, windAlert } = mockAlerts;
+      return {
+        ...mockAlerts,
+        hasAlerts: true,
+        gear: analyzeGear(uvAlert, rainAlert, windAlert),
+      };
     }
 
     const nextFourHours = getNextFourHours(data.hourly);
@@ -47,6 +52,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
       rainAlert: rain,
       windAlert: wind,
       hasAlerts: uv !== null || rain !== null || wind !== null,
+      gear: analyzeGear(uv, rain, wind),
     };
   }, [data.hourly]);
 
@@ -54,13 +60,14 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
   if (!hasAlerts) {
     return (
       <Box className={styles.container}>
-        <InformativeText textAlign={"center"}>No alerts for the next 4 hours</InformativeText>
+        <GearRecommendation gear={gear} />
       </Box>
     );
   }
 
   return (
     <Box className={styles.container}>
+      <GearRecommendation gear={gear} />
       <Flex className={styles.headerRow}>
         <Text className={styles.header}>Alerts</Text>
       </Flex>

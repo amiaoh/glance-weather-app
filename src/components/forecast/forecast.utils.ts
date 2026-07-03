@@ -1,4 +1,4 @@
-import { HourlyForecast, RainAlert, RainLevel, UVAlert, WindAlert, WindLevel } from '../../types/weather';
+import { GearRecommendation, HourlyForecast, RainAlert, RainLevel, UVAlert, WindAlert, WindLevel } from '../../types/weather';
 
 import { formatHour } from './formatters';
 
@@ -111,6 +111,64 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   };
 }
 
+/**
+ * Synthesizes the individual UV/rain/wind alerts into a single practical
+ * "what should I take with me" answer for the next 4 hours.
+ *
+ * The reasoning an umbrella alone doesn't help once wind gets strong enough
+ * to blow rain sideways - that combination calls for proper wet weather gear
+ * instead of "rain = umbrella" in isolation.
+ */
+function analyzeGear(
+  uvAlert: UVAlert | null,
+  rainAlert: RainAlert | null,
+  windAlert: WindAlert | null
+): GearRecommendation {
+  if (rainAlert) {
+    const rainDefeatsUmbrella =
+      rainAlert.level === 'heavy' ||
+      (rainAlert.level === 'moderate' && windAlert?.level === 'strong');
+
+    if (rainDefeatsUmbrella) {
+      return {
+        level: 'wet-weather-gear',
+        label: 'Full wet weather gear',
+        detail: windAlert
+          ? `${rainAlert.totalMm.toFixed(1)}mm expected with ${Math.round(windAlert.speed)}km/h wind - an umbrella won't hold up`
+          : `${rainAlert.totalMm.toFixed(1)}mm of rain expected ${formatAlertTime(rainAlert.alertTime)}`,
+      };
+    }
+
+    return {
+      level: 'umbrella',
+      label: 'Umbrella will do',
+      detail: `${rainAlert.totalMm.toFixed(1)}mm expected ${formatAlertTime(rainAlert.alertTime)}`,
+    };
+  }
+
+  if (windAlert?.level === 'strong') {
+    return {
+      level: 'windbreaker',
+      label: 'Windy - secure loose items',
+      detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime)}`,
+    };
+  }
+
+  if (uvAlert) {
+    return {
+      level: 'sun',
+      label: 'Sun protection',
+      detail: `UV reaching ${Math.round(uvAlert.uvValue)} ${formatAlertTime(uvAlert.alertTime)}`,
+    };
+  }
+
+  return {
+    level: 'none',
+    label: 'No protection needed',
+    detail: 'Clear conditions expected for the next 4 hours',
+  };
+}
+
 function getTodayRemainingHours(hourly: HourlyForecast[]): HourlyForecast[] {
   const now = new Date();
   const todayEnd = new Date(now);
@@ -162,5 +220,5 @@ function findMaxUV(hours: HourlyForecast[]): {
     time: max.time,
   };
 }
-export { analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours };
+export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours };
 

@@ -1,6 +1,7 @@
 import type { SystemStyleObject } from '@chakra-ui/react';
 
 export const shellStyle: SystemStyleObject = {
+  position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   height: '100%',

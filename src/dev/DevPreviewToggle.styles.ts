@@ -1,9 +1,10 @@
 import type { SystemStyleObject } from '@chakra-ui/react';
 
 export const toggleStyle: SystemStyleObject = {
-  position: 'fixed',
+  position: 'absolute',
   bottom: '8px',
   right: '8px',
+  left: '8px',
   zIndex: 9999,
   background: 'bg.secondary',
   borderRadius: 'var(--radius-sm)',
@@ -11,6 +12,10 @@ export const toggleStyle: SystemStyleObject = {
 };
 
 export const toggleFieldStyle: SystemStyleObject = {
+  width: '100%',
   fontSize: 'var(--font-size-xs)',
   color: 'text.secondary',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 };

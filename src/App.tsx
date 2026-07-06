@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import styles from './App.module.css';
+import { spinnerStyle } from './App.styles';
 import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
 import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
@@ -20,8 +20,15 @@ function WeatherContent() {
 
   if (isLoading && !data) {
     return (
-      <Flex className={styles.loading}>
-        <Box className={styles.spinner} />
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        h="100%"
+        gap="var(--padding-md)"
+        color="text.secondary"
+      >
+        <Box css={spinnerStyle} />
         <Text>Loading weather...</Text>
       </Flex>
     );
@@ -29,9 +36,18 @@ function WeatherContent() {
 
   if (error && !data) {
     return (
-      <Flex className={styles.error}>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        h="100%"
+        gap="var(--padding-sm)"
+        color="accent"
+      >
         <Text>Failed to load weather data</Text>
-        <Text className={styles.errorDetail}>{error}</Text>
+        <Text fontSize="var(--font-size-sm)" color="text.muted">
+          {error}
+        </Text>
       </Flex>
     );
   }
@@ -47,7 +63,20 @@ function WeatherContent() {
       <NextFourHoursAlerts data={data} />
 
       {error && (
-        <Box className={styles.staleWarning}>Using cached data - {error}</Box>
+        <Box
+          position="absolute"
+          bottom={0}
+          left={0}
+          right={0}
+          px="var(--padding-sm)"
+          py="var(--padding-xs)"
+          bg="rgba(233, 69, 96, 0.2)"
+          color="accent"
+          fontSize="var(--font-size-xs)"
+          textAlign="center"
+        >
+          Using cached data - {error}
+        </Box>
       )}
     </>
   );

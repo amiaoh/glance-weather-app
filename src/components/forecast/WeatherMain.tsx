@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, Icon, Text } from "@chakra-ui/react";
 import { findMaxTemp, findMaxUV, getTodayRemainingHours } from './forecast.utils';
 import { mockCurrentHour, mockMaxTemp, mockMaxUV } from './mockData';
 
@@ -9,7 +9,7 @@ import { formatHour } from "./formatters";
 import { InformativeText } from './InformativeText';
 import { UVBadge } from "./UVBadge";
 import { WeatherIcon } from "./WeatherIcon";
-import styles from "./WeatherMain.module.css";
+import { cardLabelStyle, peakTimeStyle, tempValueStyle, uvIconStyle } from './WeatherMain.styles';
 
 interface WeatherMainProps {
   data: WeatherData;
@@ -35,15 +35,16 @@ export function WeatherMain({ data }: WeatherMainProps) {
     !maxTemp || maxTemp.value <= currentHour.temperature;
   const isMaxUVPast =
     !maxUV || maxUV.value <= currentHour.uvIndex!;
+
   return (
-    <Box className={styles.container}>
-      <Grid className={styles.grid}>
+    <Box p="var(--padding-sm)">
+      <Grid templateColumns="repeat(2, 1fr)" gap="var(--padding-md)">
         {/* Now Card - Current Temp & UV */}
-        <Box className={`${styles.card} ${styles.nowCard}`}>
-          <Text className={styles.cardLabel}>Now</Text>
-          <Flex className={styles.cardContent}>
-            <Flex className={styles.metric}>
-              <Text className={styles.tempValue}>
+        <Box p="var(--padding-sm)" borderRadius="var(--radius-md)" bg="bg.now">
+          <Text css={cardLabelStyle}>Now</Text>
+          <Flex justify="flex-start" align="center" gap="var(--padding-md)">
+            <Flex align="center" gap="4px">
+              <Text css={tempValueStyle}>
                 {Math.round(currentHour.temperature)}°
               </Text>
               <WeatherIcon
@@ -52,27 +53,27 @@ export function WeatherMain({ data }: WeatherMainProps) {
                 size={32}
               />
             </Flex>
-            <Box className={styles.separator} />
-            <Flex className={styles.metric}>
-              <TbUvIndex className={styles.uvIcon} />
+            <Box w="1px" h="24px" bg="border.DEFAULT" />
+            <Flex align="center" gap="4px">
+              <Icon as={TbUvIndex} css={uvIconStyle} />
               <UVBadge value={currentHour.uvIndex} />
             </Flex>
           </Flex>
         </Box>
 
         {/* Max Card - Max Temp & UV */}
-        <Box className={styles.card}>
-          <Text className={styles.cardLabel}>Max</Text>
+        <Box p="var(--padding-sm)" borderRadius="var(--radius-md)">
+          <Text css={cardLabelStyle}>Max</Text>
 
           {isMaxTempPast && isMaxUVPast ? (
             <InformativeText paddingTop={"1em"}>Same as now</InformativeText>
           ) : (
             <>
-              <Flex className={styles.cardContent}>
+              <Flex justify="flex-start" align="center" gap="var(--padding-md)">
                 {!isMaxTempPast && maxTemp && (
                   <>
-                    <Flex className={styles.metric}>
-                      <Text className={styles.tempValue}>
+                    <Flex align="center" gap="4px">
+                      <Text css={tempValueStyle}>
                         {`${Math.round(maxTemp.value)}°`}
                       </Text>
                       <WeatherIcon
@@ -81,26 +82,26 @@ export function WeatherMain({ data }: WeatherMainProps) {
                         size={32}
                       />
                     </Flex>
-                    <Box className={styles.separator} />
+                    <Box w="1px" h="24px" bg="border.DEFAULT" />
                   </>
                 )}
 
                 {!isMaxUVPast && maxUV && (
-                  <Flex className={styles.metric}>
-                    <TbUvIndex className={styles.uvIcon} />
+                  <Flex align="center" gap="4px">
+                    <Icon as={TbUvIndex} css={uvIconStyle} />
                     <UVBadge value={maxUV?.value ?? null} />
                   </Flex>
                 )}
               </Flex>
 
-              <Flex className={styles.timesRow}>
+              <Flex justify="space-between" mt="4px">
                 {!isMaxTempPast && maxTemp && (
-                  <Text className={styles.peakTime}>
+                  <Text css={peakTimeStyle}>
                     {`at ${formatHour(maxTemp.time)}`}
                   </Text>
                 )}
                 {!isMaxUVPast && maxUV && (
-                  <Text className={styles.peakTime}>
+                  <Text css={peakTimeStyle}>
                     {`at ${formatHour(maxUV.time)}`}
                   </Text>
                 )}

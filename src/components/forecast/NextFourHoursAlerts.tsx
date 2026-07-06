@@ -1,25 +1,26 @@
 import { FaUmbrella, FaWind } from "react-icons/fa";
-import { RainLevel, WeatherData, WindLevel } from '../../types/weather';
+import { WeatherData } from '../../types/weather';
 import { analyzeGear, analyzeRain, analyzeUV, analyzeWind, formatAlertTime, getNextFourHours } from './forecast.utils';
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
-import { Box, Flex, Grid, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, Icon, Text } from "@chakra-ui/react";
 import { GearRecommendation } from './GearRecommendation';
 import { mockAlerts } from './mockData';
-import styles from "./NextFourHoursAlerts.module.css";
 import { UVBadge } from './UVBadge';
-
-function getRainIconClass(level: RainLevel): string {
-  if (level === "heavy") return styles.iconVeryHigh;
-  if (level === "moderate") return styles.iconModerate;
-  return styles.iconLight;
-}
-
-function getWindIconClass(level: WindLevel): string {
-  if (level === "strong") return styles.iconVeryHigh;
-  return styles.iconModerate;
-}
+import {
+  alertContentStyle,
+  alertIconStyle,
+  alertRowStyle,
+  alertTimeStyle,
+  alertValueStyle,
+  alertsGridStyle,
+  containerStyle,
+  headerRowStyle,
+  headerTextStyle,
+  rainIconColor,
+  windIconColor,
+} from './NextFourHoursAlerts.styles';
 
 interface AlertsProps {
   data: WeatherData;
@@ -59,50 +60,50 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
 
   if (!hasAlerts) {
     return (
-      <Box className={styles.container}>
+      <Box css={containerStyle}>
         <GearRecommendation gear={gear} />
       </Box>
     );
   }
 
   return (
-    <Box className={styles.container}>
+    <Box css={containerStyle}>
       <GearRecommendation gear={gear} />
-      <Flex className={styles.headerRow}>
-        <Text className={styles.header}>Alerts</Text>
+      <Flex css={headerRowStyle}>
+        <Text css={headerTextStyle}>Alerts</Text>
       </Flex>
-      <Grid className={styles.alertsGrid}>
+      <Grid css={alertsGridStyle}>
         {/* UV Alert */}
         {uvAlert && (
-          <Flex className={styles.alertRow}>
-            <TbUvIndex className={styles.alertIcon} />
-            <Flex className={styles.alertContent}>
+          <Flex css={alertRowStyle}>
+            <Icon as={TbUvIndex} css={alertIconStyle} />
+            <Flex css={alertContentStyle}>
               <UVBadge value={uvAlert.uvValue} />
-              <Text className={styles.alertTime}>{formatAlertTime(uvAlert.alertTime)}</Text>
+              <Text css={alertTimeStyle}>{formatAlertTime(uvAlert.alertTime)}</Text>
             </Flex>
           </Flex>
         )}
 
         {/* Rain Alert */}
         {rainAlert && (
-          <Flex className={styles.alertRow}>
-            <FaUmbrella className={`${styles.alertIcon} ${getRainIconClass(rainAlert.level)}`} />
-            <Flex className={styles.alertContent}>
-              <Text className={styles.alertValue}>{rainAlert.totalMm.toFixed(1)}mm</Text>
-              <Text className={styles.alertValue}>{rainAlert.precipitationProbability.toFixed(1)}%</Text>
+          <Flex css={alertRowStyle}>
+            <Icon as={FaUmbrella} css={{ ...alertIconStyle, color: rainIconColor(rainAlert.level) }} />
+            <Flex css={alertContentStyle}>
+              <Text css={alertValueStyle}>{rainAlert.totalMm.toFixed(1)}mm</Text>
+              <Text css={alertValueStyle}>{rainAlert.precipitationProbability.toFixed(1)}%</Text>
 
-              <Text className={styles.alertTime}>{formatAlertTime(rainAlert.alertTime)}</Text>
+              <Text css={alertTimeStyle}>{formatAlertTime(rainAlert.alertTime)}</Text>
             </Flex>
           </Flex>
         )}
 
         {/* Wind Alert */}
         {windAlert && (
-          <Flex className={styles.alertRow}>
-            <FaWind className={`${styles.alertIcon} ${getWindIconClass(windAlert.level)}`} />
-            <Flex className={styles.alertContent}>
-              <Text className={styles.alertValue}>{Math.round(windAlert.speed)} km/h</Text>
-              <Text className={styles.alertTime}>{formatAlertTime(windAlert.alertTime)}</Text>
+          <Flex css={alertRowStyle}>
+            <Icon as={FaWind} css={{ ...alertIconStyle, color: windIconColor(windAlert.level) }} />
+            <Flex css={alertContentStyle}>
+              <Text css={alertValueStyle}>{Math.round(windAlert.speed)} km/h</Text>
+              <Text css={alertTimeStyle}>{formatAlertTime(windAlert.alertTime)}</Text>
             </Flex>
           </Flex>
         )}

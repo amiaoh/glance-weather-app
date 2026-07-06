@@ -2,7 +2,14 @@ import { Flex, IconButton, NativeSelect, Text } from '@chakra-ui/react';
 import { FiMapPin, FiNavigation, FiRefreshCw } from 'react-icons/fi';
 import { AUSTRALIAN_CITIES } from '../../utils/cityCoordinates';
 import { useLocation } from '../../hooks/useLocation';
-import styles from './Header.module.css';
+import {
+  citySelectFieldStyle,
+  headerStyle,
+  iconButtonStyle,
+  sideGroupStyle,
+  spinningStyle,
+  updatedStyle,
+} from './Header.styles';
 
 interface HeaderProps {
   lastUpdated: Date | null;
@@ -14,10 +21,11 @@ export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
   const { city, isLocating, detectLocation, setCity } = useLocation();
 
   return (
-    <Flex as="header" className={styles.header}>
-      <Flex className={styles.left}>
-        <NativeSelect.Root size="sm" className={styles.citySelect}>
+    <Flex as="header" css={headerStyle}>
+      <Flex css={sideGroupStyle}>
+        <NativeSelect.Root size="sm">
           <NativeSelect.Field
+            css={citySelectFieldStyle}
             value={city.name}
             onChange={(e) => setCity(e.target.value)}
             aria-label="Select city"
@@ -32,7 +40,7 @@ export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
         </NativeSelect.Root>
 
         <IconButton
-          className={`${styles.iconButton} ${isLocating ? styles.spinning : ''}`}
+          css={{ ...iconButtonStyle, ...(isLocating ? spinningStyle : {}) }}
           onClick={detectLocation}
           disabled={isLocating}
           title="Use my location"
@@ -44,14 +52,14 @@ export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
         </IconButton>
       </Flex>
 
-      <Flex className={styles.right}>
+      <Flex css={sideGroupStyle}>
         {lastUpdated && (
-          <Text className={styles.updated} title={`Last updated: ${lastUpdated.toLocaleString()}`}>
+          <Text css={updatedStyle} title={`Last updated: ${lastUpdated.toLocaleString()}`}>
             {`Updated ${lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
           </Text>
         )}
         <IconButton
-          className={`${styles.iconButton} ${isRefreshing ? styles.spinning : ''}`}
+          css={{ ...iconButtonStyle, ...(isRefreshing ? spinningStyle : {}) }}
           onClick={onRefresh}
           disabled={isRefreshing}
           title="Refresh weather data"

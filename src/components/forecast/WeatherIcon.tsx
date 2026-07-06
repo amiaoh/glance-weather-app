@@ -1,5 +1,5 @@
+import { Image } from '@chakra-ui/react';
 import { getWeatherInfo } from '../../utils/weatherCodeMapper';
-import styles from './WeatherIcon.module.css';
 
 interface WeatherIconProps {
   code: number;
@@ -11,13 +11,14 @@ export function WeatherIcon({ code, isDay, size = 32 }: WeatherIconProps) {
   const { icon, description } = getWeatherInfo(code, isDay);
 
   return (
-    <img
-      className={styles.icon}
+    <Image
+      display="block"
+      objectFit="contain"
       src={`/weather-icons/${icon}.svg`}
       alt={description}
       title={description}
-      width={size}
-      height={size}
+      width={`${size}px`}
+      height={`${size}px`}
     />
   );
 }

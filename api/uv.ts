@@ -2,7 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import fetchUVData from 'arpansa-uv-data';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
@@ -26,9 +25,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       date: new Date(date),
     });
 
-    // Transform to hourly data for easier consumption
     const hourlyData = uvData
-      .filter((_, index) => index % 60 === 0) // Get one reading per hour
+      .filter((_, index) => index % 60 === 0) // ARPANSA data is per-minute; keep 1 reading per hour
       .map(entry => ({
         time: entry.timestamp,
         uvIndex: entry.forecast ?? entry.measured ?? 0,

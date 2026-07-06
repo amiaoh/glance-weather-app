@@ -32,7 +32,6 @@ export function WeatherMain({ data }: WeatherMainProps) {
   return (
     <Box p="var(--padding-sm)">
       <Grid templateColumns="repeat(2, 1fr)" gap="var(--padding-md)">
-        {/* Now Card - Current Temp & UV */}
         <Box p="var(--padding-sm)" borderRadius="var(--radius-md)" bg="bg.now">
           <Text css={cardLabelStyle}>Now</Text>
           <Flex justify="flex-start" align="center" gap="var(--padding-md)">
@@ -54,7 +53,6 @@ export function WeatherMain({ data }: WeatherMainProps) {
           </Flex>
         </Box>
 
-        {/* Max Card - Max Temp & UV */}
         <Box p="var(--padding-sm)" borderRadius="var(--radius-md)">
           <Text css={cardLabelStyle}>Max</Text>
 

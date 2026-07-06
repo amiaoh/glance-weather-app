@@ -14,7 +14,7 @@ function getSavedCity(): CityData {
       if (city) return city;
     }
   } catch {
-    // Ignore
+    // ignore
   }
   return DEFAULT_CITY;
 }

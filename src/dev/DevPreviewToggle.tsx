@@ -7,11 +7,6 @@ interface DevPreviewToggleProps {
   onChange: (id: string) => void;
 }
 
-/**
- * Floating scenario picker, dev builds only (import.meta.env.DEV).
- * Lets you flip through every alert/gear state live instead of hand-editing
- * a hardcoded PREVIEW_MODE flag and reloading.
- */
 export function DevPreviewToggle({ scenarioId, onChange }: DevPreviewToggleProps) {
   if (!import.meta.env.DEV) return null;
 

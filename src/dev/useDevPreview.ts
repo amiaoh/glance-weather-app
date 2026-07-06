@@ -11,10 +11,6 @@ export interface DevPreview {
   previewData: WeatherData | null;
 }
 
-/**
- * Dev-only escape hatch for visualising every alert/gear state without
- * waiting for real weather. No-ops entirely in production builds.
- */
 export function useDevPreview(cityName: string): DevPreview {
   const [scenarioId, setScenarioId] = useState<string>(() => {
     if (!isDev) return 'off';

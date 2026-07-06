@@ -59,7 +59,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
         <Text css={headerTextStyle}>Alerts</Text>
       </Flex>
       <Grid css={alertsGridStyle}>
-        {/* UV Alert */}
         {uvAlert && (
           <Flex css={alertRowStyle}>
             <Icon as={TbUvIndex} css={alertIconStyle} />
@@ -70,7 +69,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           </Flex>
         )}
 
-        {/* Rain Alert */}
         {rainAlert && (
           <Flex css={alertRowStyle}>
             <Icon as={FaUmbrella} css={{ ...alertIconStyle, color: rainIconColor(rainAlert.level) }} />
@@ -83,7 +81,6 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
           </Flex>
         )}
 
-        {/* Wind Alert */}
         {windAlert && (
           <Flex css={alertRowStyle}>
             <Icon as={FaWind} css={{ ...alertIconStyle, color: windIconColor(windAlert.level) }} />

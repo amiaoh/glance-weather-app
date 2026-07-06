@@ -7,9 +7,7 @@ import { system } from './theme';
 import './styles/global.css';
 
 registerSW({
-  onNeedRefresh() {
-    // Auto-update when new version available
-  },
+  onNeedRefresh() {},
   onOfflineReady() {
     console.log('App ready for offline use');
   },

@@ -31,8 +31,6 @@ export const detailStyle: SystemStyleObject = {
   color: 'text.muted',
 };
 
-// Each gear level gets its own accent color, used for both the container's
-// left border and the icon.
 export const LEVEL_COLOR: Record<GearLevel, string> = {
   none: 'uv.low',
   sun: 'uv.high',

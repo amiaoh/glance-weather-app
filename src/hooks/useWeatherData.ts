@@ -20,7 +20,7 @@ interface UseWeatherDataResult {
 }
 
 const CACHE_KEY = 'glance-weather-cache';
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const CACHE_DURATION = 30 * 60 * 1000;
 
 function getCachedData(cityName: string): WeatherData | null {
   try {
@@ -50,7 +50,7 @@ function setCachedData(data: WeatherData): void {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   } catch {
-    // Ignore storage errors
+    // ignore
   }
 }
 
@@ -74,13 +74,11 @@ export function useWeatherData({
       const now = new Date();
       const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-      // Fetch weather and UV data in parallel
       const [weatherResponse, uvResponse] = await Promise.all([
         fetchWeatherData({ lat, lng, timezone }),
         fetchUVData(arpansaCity, today).catch(() => null),
       ]);
 
-      // Build UV lookup map
       const uvMap = new Map<number, number>();
       if (uvResponse?.data) {
         for (const entry of uvResponse.data) {
@@ -92,7 +90,6 @@ export function useWeatherData({
         }
       }
 
-      // Transform to hourly forecast
       const hourly: HourlyForecast[] = weatherResponse.hourly.time.map((timeStr, i) => {
         const time = new Date(timeStr);
         const hour = time.getHours();
@@ -123,7 +120,6 @@ export function useWeatherData({
       const message = err instanceof Error ? err.message : 'Failed to fetch weather data';
       setError(message);
 
-      // Try to use cached data on error
       const cached = getCachedData(cityName);
       if (cached) {
         setData(cached);
@@ -142,14 +138,11 @@ export function useWeatherData({
     const ONE_HOUR = 60 * 60 * 1000;
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
-    // Calculate ms until the next hour
     const now = new Date();
     const msUntilNextHour = (60 - now.getMinutes()) * 60 * 1000 - now.getSeconds() * 1000 - now.getMilliseconds();
 
-    // First timeout to sync with the hour change
     const timeoutId = setTimeout(() => {
       fetchData();
-      // Then refresh every hour after that
       intervalId = setInterval(fetchData, ONE_HOUR);
     }, msUntilNextHour);
 

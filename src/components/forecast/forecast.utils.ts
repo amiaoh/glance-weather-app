@@ -16,7 +16,6 @@ function getRainLevel(totalMm: number): RainLevel {
 
 function getNextFourHours(hourly: HourlyForecast[]): HourlyForecast[] {
   const now = new Date();
-  // Start from the beginning of the current hour to include the current hour
   const currentHourStart = new Date(now);
   currentHourStart.setMinutes(0, 0, 0);
   const fourHoursLater = new Date(currentHourStart.getTime() + 4 * 60 * 60 * 1000);
@@ -59,7 +58,6 @@ function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
 }
 
 function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
-  // Filter hours with precipitation and sort by time
   const hoursWithRain = hours.filter((h) => h.precipitation > 0);
   if (hoursWithRain.length === 0) return null;
 
@@ -67,16 +65,14 @@ function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
   );
 
-  // Find earliest moderate or heavier rain
   const moderateOrHeavier = sorted.find(
     (h) => getRainLevel(h.precipitation) !== "light"
   );
 
-  // If no moderate+, use earliest light rain
+  // Prefer the earliest moderate+ rain; fall back to the earliest light rain
   const alertHour = moderateOrHeavier || sorted[0];
   const level = getRainLevel(alertHour.precipitation);
 
-  // Calculate total for display
   const totalMm = hours.reduce((sum, h) => sum + h.precipitation, 0);
 
   return {
@@ -92,12 +88,10 @@ function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
 function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   if (hours.length === 0) return null;
 
-  // Sort by time
   const sorted = [...hours].sort(
     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
   );
 
-  // Find earliest moderate or stronger wind
   const alertHour = sorted.find(
     (h) => getWindLevel(h.windSpeed) !== "light"
   );

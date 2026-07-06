@@ -1,14 +1,7 @@
 import type { HourlyForecast } from '../types/weather';
 
-/**
- * Synthetic hourly forecasts for visually QA-ing every alert/gear state
- * without waiting for real weather to produce it. Replaces the old
- * per-component PREVIEW_MODE booleans + hand-written mock fragments
- * (which could drift out of sync with each other) with a single source of
- * truth: a full HourlyForecast[] that flows through the same
- * analyzeUV/analyzeRain/analyzeWind/analyzeGear functions real data does.
- */
-
+// Each scenario is a full HourlyForecast[] so it flows through the same
+// analyzeUV/analyzeRain/analyzeWind/analyzeGear functions real data does.
 function hourFrom(hoursAhead: number): Date {
   const date = new Date();
   date.setMinutes(0, 0, 0);

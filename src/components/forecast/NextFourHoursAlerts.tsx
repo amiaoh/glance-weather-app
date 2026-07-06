@@ -6,7 +6,6 @@ import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
 import { Box, Flex, Grid, Icon, Text } from "@chakra-ui/react";
 import { GearRecommendation } from './GearRecommendation';
-import { mockAlerts } from './mockData';
 import { UVBadge } from './UVBadge';
 import {
   alertContentStyle,
@@ -26,22 +25,9 @@ interface AlertsProps {
   data: WeatherData;
 }
 
-// Set to true to preview all alert states
-const PREVIEW_MODE = false;
-
-
 export function NextFourHoursAlerts({ data }: AlertsProps) {
 
   const { uvAlert, rainAlert, windAlert, hasAlerts, gear } = useMemo(() => {
-    if (PREVIEW_MODE) {
-      const { uvAlert, rainAlert, windAlert } = mockAlerts;
-      return {
-        ...mockAlerts,
-        hasAlerts: true,
-        gear: analyzeGear(uvAlert, rainAlert, windAlert),
-      };
-    }
-
     const nextFourHours = getNextFourHours(data.hourly);
     const uv = analyzeUV(nextFourHours);
 

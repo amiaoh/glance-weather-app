@@ -5,12 +5,14 @@ import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
 import { Header } from './components/layout/Header';
 import { LocationProvider } from './components/location/LocationContext';
+import { DevPreviewToggle } from './dev/DevPreviewToggle';
+import { useDevPreview } from './dev/useDevPreview';
 import { useLocation } from './hooks/useLocation';
 import { useWeatherData } from './hooks/useWeatherData';
 
 function WeatherContent() {
   const { city } = useLocation();
-  const { data, isLoading, error, refresh } = useWeatherData({
+  const { data: liveData, isLoading, error, refresh } = useWeatherData({
     lat: city.lat,
     lng: city.lng,
     timezone: city.timezone,
@@ -18,42 +20,52 @@ function WeatherContent() {
     cityName: city.name,
   });
 
+  const { scenarioId, setScenarioId, previewData } = useDevPreview(city.name);
+  const devToggle = <DevPreviewToggle scenarioId={scenarioId} onChange={setScenarioId} />;
+  const data = previewData ?? liveData;
+
   if (isLoading && !data) {
     return (
-      <Flex
-        direction="column"
-        align="center"
-        justify="center"
-        h="100%"
-        gap="var(--padding-md)"
-        color="text.secondary"
-      >
-        <Box css={spinnerStyle} />
-        <Text>Loading weather...</Text>
-      </Flex>
+      <>
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          h="100%"
+          gap="var(--padding-md)"
+          color="text.secondary"
+        >
+          <Box css={spinnerStyle} />
+          <Text>Loading weather...</Text>
+        </Flex>
+        {devToggle}
+      </>
     );
   }
 
   if (error && !data) {
     return (
-      <Flex
-        direction="column"
-        align="center"
-        justify="center"
-        h="100%"
-        gap="var(--padding-sm)"
-        color="accent"
-      >
-        <Text>Failed to load weather data</Text>
-        <Text fontSize="var(--font-size-sm)" color="text.muted">
-          {error}
-        </Text>
-      </Flex>
+      <>
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          h="100%"
+          gap="var(--padding-sm)"
+          color="accent"
+        >
+          <Text>Failed to load weather data</Text>
+          <Text fontSize="var(--font-size-sm)" color="text.muted">
+            {error}
+          </Text>
+        </Flex>
+        {devToggle}
+      </>
     );
   }
 
   if (!data) {
-    return null;
+    return devToggle;
   }
 
   return (
@@ -62,7 +74,7 @@ function WeatherContent() {
       <WeatherMain data={data} />
       <NextFourHoursAlerts data={data} />
 
-      {error && (
+      {error && !previewData && (
         <Box
           position="absolute"
           bottom={0}
@@ -78,6 +90,7 @@ function WeatherContent() {
           Using cached data - {error}
         </Box>
       )}
+      {devToggle}
     </>
   );
 }

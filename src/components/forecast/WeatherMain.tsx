@@ -1,6 +1,5 @@
 import { Box, Flex, Grid, Icon, Text } from "@chakra-ui/react";
 import { findMaxTemp, findMaxUV, getTodayRemainingHours } from './forecast.utils';
-import { mockCurrentHour, mockMaxTemp, mockMaxUV } from './mockData';
 
 import { useMemo } from "react";
 import { TbUvIndex } from "react-icons/tb";
@@ -15,16 +14,10 @@ interface WeatherMainProps {
   data: WeatherData;
 }
 
-// Set to true to preview with mock data
-const PREVIEW_MODE = false;
-
 export function WeatherMain({ data }: WeatherMainProps) {
-  const currentHour = PREVIEW_MODE ? mockCurrentHour : data.hourly[0];
+  const currentHour = data.hourly[0];
 
   const { maxTemp, maxUV } = useMemo(() => {
-    if (PREVIEW_MODE) {
-      return { maxTemp: mockMaxTemp, maxUV: mockMaxUV };
-    }
     const remainingToday = getTodayRemainingHours(data.hourly);
     return {
       maxTemp: findMaxTemp(remainingToday),

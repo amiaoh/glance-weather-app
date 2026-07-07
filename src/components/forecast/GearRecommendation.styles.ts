@@ -7,7 +7,7 @@ export const containerStyle: SystemStyleObject = {
   gap: 'var(--padding-sm)',
   borderRadius: 'var(--radius-md)',
   borderLeft: '4px solid',
-  background: 'bg.now',
+  background: 'sand',
   paddingInline: 'var(--padding-md)',
   paddingBlock: 'var(--padding-sm)',
   marginBottom: 'var(--padding-sm)',
@@ -26,12 +26,12 @@ export const iconStyle: SystemStyleObject = {
 export const labelStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-base)',
   fontWeight: 700,
-  color: 'text.primary',
+  color: 'ink',
 };
 
 export const detailStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
 };
 
 export const LEVEL_COLOR: Record<GearLevel, string> = {

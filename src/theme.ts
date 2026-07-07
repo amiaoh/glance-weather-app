@@ -1,9 +1,9 @@
 import { createSystem, defaultConfig } from '@chakra-ui/react';
 import type { SystemConfig } from '@chakra-ui/react';
 
-// Color values migrated from src/styles/variables.css. Kept as semantic
-// tokens (rather than plain tokens) so light/dark variants can be added
-// later without touching component code.
+// Palette matches the Claude Design mockup's CSS variables 1:1 (page, card,
+// ink/ink2/ink3, line, sand, accent, amber, sage, switchOff, severity.*) so
+// future design updates can be ported by name rather than re-derived.
 const config: SystemConfig = {
   theme: {
     keyframes: {
@@ -13,25 +13,31 @@ const config: SystemConfig = {
     },
     tokens: {
       colors: {
-        accent: { value: '#e94560' },
         cold: { value: '#78909C' },
       },
     },
     semanticTokens: {
       colors: {
-        bg: {
-          primary: { value: { base: '#f5f5f5' } },
-          secondary: { value: { base: '#ffffff' } },
-          now: { value: { base: 'rgb(232, 230, 230)' } },
-          highlight: { value: { base: '#d0d0d0' } },
-        },
-        text: {
-          primary: { value: { base: '#1a1a2e' } },
-          secondary: { value: { base: '#555555' } },
-          muted: { value: { base: '#888888' } },
-        },
-        border: {
-          DEFAULT: { value: { base: 'rgba(0, 0, 0, 0.1)' } },
+        page: { value: { base: '#EDE4D4', _dark: '#161310' } },
+        card: { value: { base: '#FFFDF8', _dark: '#221E18' } },
+        ink: { value: { base: '#302A23', _dark: '#ECE4D6' } },
+        ink2: { value: { base: '#7A7063', _dark: '#ADA491' } },
+        ink3: { value: { base: '#A79C8B', _dark: '#7C7365' } },
+        line: { value: { base: '#EAE1D1', _dark: '#38322A' } },
+        sand: { value: { base: '#F0E7D7', _dark: '#2C271F' } },
+        amber: { value: { base: '#B78526', _dark: '#D9A94E' } },
+        sage: { value: { base: '#788A57', _dark: '#9DAE72' } },
+        accent: { value: { base: '#B25E3B', _dark: '#C77E56' } },
+        switchOff: { value: { base: '#D8CFBF', _dark: '#4A4239' } },
+        severity: {
+          extreme: {
+            fg: { value: { base: '#8a4a2e', _dark: '#E6A981' } },
+            bg: { value: { base: '#F4E1D4', _dark: '#3A2A21' } },
+          },
+          moderate: {
+            fg: { value: { base: '#8a6516', _dark: '#D8B265' } },
+            bg: { value: { base: '#F5E9C9', _dark: '#332B1A' } },
+          },
         },
         // UV colors (WHO standard)
         uv: {

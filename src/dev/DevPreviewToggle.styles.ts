@@ -6,7 +6,7 @@ export const toggleStyle: SystemStyleObject = {
   right: '8px',
   left: '8px',
   zIndex: 9999,
-  background: 'bg.secondary',
+  background: 'card',
   borderRadius: 'var(--radius-sm)',
   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
 };
@@ -14,7 +14,7 @@ export const toggleStyle: SystemStyleObject = {
 export const toggleFieldStyle: SystemStyleObject = {
   width: '100%',
   fontSize: 'var(--font-size-xs)',
-  color: 'text.secondary',
+  color: 'ink2',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',

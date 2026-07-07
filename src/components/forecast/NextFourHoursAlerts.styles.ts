@@ -14,7 +14,7 @@ export const headerRowStyle: SystemStyleObject = {
 export const headerTextStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-sm)',
   fontWeight: 600,
-  color: 'text.secondary',
+  color: 'ink2',
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
 };
@@ -30,7 +30,7 @@ export const alertRowStyle: SystemStyleObject = {
   gap: 'var(--padding-sm)',
   paddingBlock: 'var(--padding-sm)',
   borderBottom: '1px solid',
-  borderColor: 'border.DEFAULT',
+  borderColor: 'line',
   _last: {
     borderBottom: 'none',
   },
@@ -51,12 +51,12 @@ export const alertContentColumnStyle: SystemStyleObject = {
 
 export const alertTimeStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
 };
 
 export const alertIconStyle: SystemStyleObject = {
   fontSize: '50px',
-  color: 'text.secondary',
+  color: 'ink2',
   flexShrink: 0,
   textAlign: 'center',
 };
@@ -69,17 +69,17 @@ export const rainIconStyle: SystemStyleObject = {
 
 export const alertTextStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-sm)',
-  color: 'text.primary',
+  color: 'ink',
 };
 
 export const statsTextStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
 };
 
 export const detailsToggleStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
   cursor: 'pointer',
   background: 'none',
   border: 'none',

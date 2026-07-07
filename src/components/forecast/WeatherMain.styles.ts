@@ -7,7 +7,7 @@ import type { SystemStyleObject } from '@chakra-ui/react';
 export const tempValueStyle: SystemStyleObject = {
   fontSize: '36px',
   fontWeight: 600,
-  color: 'text.primary',
+  color: 'ink',
   '@media (orientation: landscape)': { fontSize: '20px' },
   '@media (max-width: 320px)': { fontSize: '18px' },
 };
@@ -21,7 +21,7 @@ export const uvIconStyle: SystemStyleObject = {
 
 export const cardLabelStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-sm)',
-  color: 'text.muted',
+  color: 'ink3',
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
   marginBottom: '4px',
@@ -30,6 +30,6 @@ export const cardLabelStyle: SystemStyleObject = {
 
 export const peakTimeStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
   '@media (max-width: 320px)': { fontSize: '8px' },
 };

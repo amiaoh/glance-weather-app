@@ -33,7 +33,7 @@ function WeatherContent() {
           justify="center"
           h="100%"
           gap="var(--padding-md)"
-          color="text.secondary"
+          color="ink2"
         >
           <Box css={spinnerStyle} />
           <Text>Loading weather...</Text>
@@ -55,7 +55,7 @@ function WeatherContent() {
           color="accent"
         >
           <Text>Failed to load weather data</Text>
-          <Text fontSize="var(--font-size-sm)" color="text.muted">
+          <Text fontSize="var(--font-size-sm)" color="ink3">
             {error}
           </Text>
         </Flex>
@@ -82,7 +82,7 @@ function WeatherContent() {
           right={0}
           px="var(--padding-sm)"
           py="var(--padding-xs)"
-          bg="rgba(233, 69, 96, 0.2)"
+          bg="accent/20"
           color="accent"
           fontSize="var(--font-size-xs)"
           textAlign="center"

@@ -5,9 +5,9 @@ export const headerStyle: SystemStyleObject = {
   justifyContent: 'space-between',
   height: 'var(--header-height)',
   px: 'var(--padding-sm)',
-  background: 'bg.secondary',
+  background: 'card',
   borderBottom: '1px solid',
-  borderColor: 'border.DEFAULT',
+  borderColor: 'line',
 };
 
 export const sideGroupStyle: SystemStyleObject = {
@@ -17,7 +17,7 @@ export const sideGroupStyle: SystemStyleObject = {
 
 export const citySelectFieldStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-sm)',
-  color: 'text.primary',
+  color: 'ink',
   fontWeight: 600,
   border: 'none',
   background: 'none',
@@ -27,14 +27,14 @@ export const citySelectFieldStyle: SystemStyleObject = {
 
 export const updatedStyle: SystemStyleObject = {
   fontSize: 'var(--font-size-xs)',
-  color: 'text.muted',
+  color: 'ink3',
 };
 
 export const iconButtonStyle: SystemStyleObject = {
-  color: 'text.muted',
+  color: 'ink3',
   transition: 'color 0.2s',
   _hover: {
-    color: 'text.primary',
+    color: 'ink',
   },
   _disabled: {
     cursor: 'not-allowed',

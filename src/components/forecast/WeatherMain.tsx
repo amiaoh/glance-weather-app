@@ -32,7 +32,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
   return (
     <Box p="var(--padding-sm)">
       <Grid templateColumns="repeat(2, 1fr)" gap="var(--padding-md)">
-        <Box p="var(--padding-sm)" borderRadius="var(--radius-md)" bg="bg.now">
+        <Box p="var(--padding-sm)" borderRadius="var(--radius-md)" bg="sand">
           <Text css={cardLabelStyle}>Now</Text>
           <Flex justify="flex-start" align="center" gap="var(--padding-md)">
             <Flex align="center" gap="4px">
@@ -45,7 +45,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
                 size={32}
               />
             </Flex>
-            <Box w="1px" h="24px" bg="border.DEFAULT" />
+            <Box w="1px" h="24px" bg="line" />
             <Flex align="center" gap="4px">
               <Icon as={TbUvIndex} css={uvIconStyle} />
               <UVBadge value={currentHour.uvIndex} />
@@ -73,7 +73,7 @@ export function WeatherMain({ data }: WeatherMainProps) {
                         size={32}
                       />
                     </Flex>
-                    <Box w="1px" h="24px" bg="border.DEFAULT" />
+                    <Box w="1px" h="24px" bg="line" />
                   </>
                 )}
 

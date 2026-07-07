@@ -42,11 +42,11 @@ export const alertContentStyle: SystemStyleObject = {
   flex: 1,
 };
 
-export const alertValueStyle: SystemStyleObject = {
-  fontSize: 'var(--font-size-sm)',
-  fontWeight: 600,
-  color: 'text.primary',
-  minWidth: '50px',
+export const alertContentColumnStyle: SystemStyleObject = {
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  gap: '2px',
+  flex: 1,
 };
 
 export const alertTimeStyle: SystemStyleObject = {
@@ -61,15 +61,28 @@ export const alertIconStyle: SystemStyleObject = {
   textAlign: 'center',
 };
 
-// Severity colors for the rain/wind icons - mirrors the UV token scale used
-// elsewhere so "moderate" always means the same color across the app.
-export const rainIconColor = (level: 'light' | 'moderate' | 'heavy'): string => {
-  if (level === 'heavy') return 'uv.veryHigh';
-  if (level === 'moderate') return 'uv.moderate';
-  return 'rain.light';
+export const rainIconStyle: SystemStyleObject = {
+  width: '40px',
+  height: '40px',
+  flexShrink: 0,
 };
 
-export const windIconColor = (level: 'moderate' | 'strong'): string => {
-  if (level === 'strong') return 'uv.veryHigh';
-  return 'uv.moderate';
+export const alertTextStyle: SystemStyleObject = {
+  fontSize: 'var(--font-size-sm)',
+  color: 'text.primary',
+};
+
+export const statsTextStyle: SystemStyleObject = {
+  fontSize: 'var(--font-size-xs)',
+  color: 'text.muted',
+};
+
+export const detailsToggleStyle: SystemStyleObject = {
+  fontSize: 'var(--font-size-xs)',
+  color: 'text.muted',
+  cursor: 'pointer',
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  textDecoration: 'underline',
 };

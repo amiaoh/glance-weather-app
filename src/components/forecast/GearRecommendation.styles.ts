@@ -1,44 +1,21 @@
 import type { SystemStyleObject } from '@chakra-ui/react';
-import type { GearLevel } from '../../types/weather';
 
 export const containerStyle: SystemStyleObject = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--padding-sm)',
-  borderRadius: 'var(--radius-md)',
-  borderLeft: '4px solid',
-  background: 'sand',
-  paddingInline: 'var(--padding-md)',
-  paddingBlock: 'var(--padding-sm)',
-  marginBottom: 'var(--padding-sm)',
-};
-
-export const rowStyle: SystemStyleObject = {
-  alignItems: 'center',
-  gap: 'var(--padding-sm)',
-};
-
-export const iconStyle: SystemStyleObject = {
-  fontSize: '36px',
-  flexShrink: 0,
+  padding: 'var(--padding-sm)',
+  marginTop: 'var(--padding-sm)',
 };
 
 export const labelStyle: SystemStyleObject = {
-  fontSize: 'var(--font-size-base)',
+  fontSize: '11px',
   fontWeight: 700,
-  color: 'ink',
-};
-
-export const detailStyle: SystemStyleObject = {
-  fontSize: 'var(--font-size-xs)',
+  letterSpacing: '1.6px',
+  textTransform: 'uppercase',
   color: 'ink3',
+  marginBottom: '12px',
 };
 
-export const LEVEL_COLOR: Record<GearLevel, string> = {
-  none: 'uv.low',
-  sun: 'uv.high',
-  umbrella: 'rain.light',
-  'wet-weather-gear': 'accent',
-  jacket: 'cold',
-  windbreaker: 'rain.moderate',
+export const listStyle: SystemStyleObject = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
 };

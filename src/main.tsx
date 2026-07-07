@@ -4,6 +4,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { system } from './theme';
+import { ColorModeProvider } from './components/theme/ColorModeContext';
 import './styles/global.css';
 
 registerSW({
@@ -16,7 +17,9 @@ registerSW({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider value={system}>
-      <App />
+      <ColorModeProvider>
+        <App />
+      </ColorModeProvider>
     </ChakraProvider>
   </StrictMode>
 );

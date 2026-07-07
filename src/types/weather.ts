@@ -41,7 +41,7 @@ interface WindAlert {
   level: WindLevel;
 }
 
-type GearLevel = "none" | "sun" | "umbrella" | "wet-weather-gear" | "windbreaker";
+type GearLevel = "none" | "sun" | "umbrella" | "wet-weather-gear" | "jacket" | "windbreaker";
 
 interface GearRecommendation {
   level: GearLevel;

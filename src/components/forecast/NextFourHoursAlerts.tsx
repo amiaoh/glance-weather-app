@@ -39,7 +39,7 @@ export function NextFourHoursAlerts({ data }: AlertsProps) {
       rainAlert: rain,
       windAlert: wind,
       hasAlerts: uv !== null || rain !== null || wind !== null,
-      gear: analyzeGear(uv, rain, wind),
+      gear: analyzeGear(uv, rain, wind, nextFourHours),
     };
   }, [data.hourly]);
 

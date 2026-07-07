@@ -42,6 +42,18 @@ function formatAlertTime(date: Date): string {
   return `at ${formatHour(date)}`;
 }
 
+function rainSummary(alert: RainAlert): string {
+  const chance = Math.round(alert.precipitationProbability);
+  return `${chance}% chance of ${alert.level} rain ${formatAlertTime(alert.alertTime)}`;
+}
+
+function windSummary(alert: WindAlert): string {
+  if (alert.level === "strong") {
+    return `Severe wind expected ${formatAlertTime(alert.alertTime)} - stay indoors if you can`;
+  }
+  return `Breezy conditions expected ${formatAlertTime(alert.alertTime)}`;
+}
+
 function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
   // Find earliest hour where UV >= 3 (requires sun protection)
   const sorted = [...hours].sort(
@@ -92,9 +104,11 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
   );
 
-  const alertHour = sorted.find(
-    (h) => getWindLevel(h.windSpeed) !== "light"
-  );
+  // Prefer the earliest strong wind hour over the earliest moderate one, so a
+  // window that ramps from moderate to strong doesn't get stuck reporting
+  // the milder onset - the gear recommendation depends on catching "strong".
+  const strongest = sorted.find((h) => getWindLevel(h.windSpeed) === "strong");
+  const alertHour = strongest || sorted.find((h) => getWindLevel(h.windSpeed) === "moderate");
 
   if (!alertHour) return null;
 
@@ -105,62 +119,90 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   };
 }
 
+// Below this, wind chill makes a jacket worth recommending even without rain.
+const JACKET_TEMP_THRESHOLD_C = 20;
+
+function temperatureAt(hours: HourlyForecast[], time: Date): number | null {
+  const match = hours.find((h) => h.time.getTime() === time.getTime());
+  return match ? match.temperature : null;
+}
+
 /**
- * Synthesizes the individual UV/rain/wind alerts into a single practical
- * "what should I take with me" answer for the next 4 hours.
+ * Synthesizes the individual UV/rain/wind alerts into practical "what should
+ * I take with me" answers for the next 4 hours - can return more than one
+ * (e.g. umbrella + jacket on a cold rainy day). Always returns at least one
+ * item; falls back to a "none" entry when nothing applies.
  *
- * The reasoning an umbrella alone doesn't help once wind gets strong enough
- * to blow rain sideways - that combination calls for proper wet weather gear
- * instead of "rain = umbrella" in isolation.
+ * Any rain plus strong wind defeats an umbrella outright (wind blows rain
+ * sideways), not just moderate-or-heavier rain - so that check isn't gated
+ * on rain level. Strong wind combined with cool temperatures calls for a
+ * jacket instead of just a wind warning, since wind chill is what actually
+ * matters at that point.
  */
 function analyzeGear(
   uvAlert: UVAlert | null,
   rainAlert: RainAlert | null,
-  windAlert: WindAlert | null
-): GearRecommendation {
+  windAlert: WindAlert | null,
+  hours: HourlyForecast[]
+): GearRecommendation[] {
+  const items: GearRecommendation[] = [];
+
   if (rainAlert) {
-    const rainDefeatsUmbrella =
-      rainAlert.level === 'heavy' ||
-      (rainAlert.level === 'moderate' && windAlert?.level === 'strong');
+    const rainDefeatsUmbrella = rainAlert.level === 'heavy' || windAlert?.level === 'strong';
 
-    if (rainDefeatsUmbrella) {
-      return {
-        level: 'wet-weather-gear',
-        label: 'Full wet weather gear',
-        detail: windAlert
-          ? `${rainAlert.totalMm.toFixed(1)}mm expected with ${Math.round(windAlert.speed)}km/h wind - an umbrella won't hold up`
-          : `${rainAlert.totalMm.toFixed(1)}mm of rain expected ${formatAlertTime(rainAlert.alertTime)}`,
-      };
-    }
-
-    return {
-      level: 'umbrella',
-      label: 'Umbrella will do',
-      detail: `${rainAlert.totalMm.toFixed(1)}mm expected ${formatAlertTime(rainAlert.alertTime)}`,
-    };
+    items.push(
+      rainDefeatsUmbrella
+        ? {
+            level: 'wet-weather-gear',
+            label: 'Full wet weather gear',
+            detail: windAlert
+              ? `${rainAlert.totalMm.toFixed(1)}mm expected with ${Math.round(windAlert.speed)}km/h wind - an umbrella won't hold up`
+              : `${rainAlert.totalMm.toFixed(1)}mm of rain expected ${formatAlertTime(rainAlert.alertTime)}`,
+          }
+        : {
+            level: 'umbrella',
+            label: 'Umbrella will do',
+            detail: `${rainAlert.totalMm.toFixed(1)}mm expected ${formatAlertTime(rainAlert.alertTime)}`,
+          }
+    );
   }
 
   if (windAlert?.level === 'strong') {
-    return {
-      level: 'windbreaker',
-      label: 'Windy - secure loose items',
-      detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime)}`,
-    };
+    const windTemp = temperatureAt(hours, windAlert.alertTime);
+    const isCold = windTemp !== null && windTemp <= JACKET_TEMP_THRESHOLD_C;
+
+    items.push(
+      isCold
+        ? {
+            level: 'jacket',
+            label: 'Jacket recommended',
+            detail: `${Math.round(windAlert.speed)}km/h wind with a top of ${Math.round(windTemp!)}° will feel colder ${formatAlertTime(windAlert.alertTime)}`,
+          }
+        : {
+            level: 'windbreaker',
+            label: 'Secure loose items',
+            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime)}`,
+          }
+    );
   }
 
   if (uvAlert) {
-    return {
+    items.push({
       level: 'sun',
       label: 'Sun protection',
       detail: `UV reaching ${Math.round(uvAlert.uvValue)} ${formatAlertTime(uvAlert.alertTime)}`,
-    };
+    });
   }
 
-  return {
-    level: 'none',
-    label: 'No protection needed',
-    detail: 'Clear conditions expected for the next 4 hours',
-  };
+  if (items.length === 0) {
+    items.push({
+      level: 'none',
+      label: 'No protection needed',
+      detail: 'Clear conditions expected for the next 4 hours',
+    });
+  }
+
+  return items;
 }
 
 function getTodayRemainingHours(hourly: HourlyForecast[]): HourlyForecast[] {
@@ -214,5 +256,5 @@ function findMaxUV(hours: HourlyForecast[]): {
     time: max.time,
   };
 }
-export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours };
+export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours, rainSummary, windSummary };
 

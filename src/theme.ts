@@ -14,6 +14,7 @@ const config: SystemConfig = {
     tokens: {
       colors: {
         accent: { value: '#e94560' },
+        cold: { value: '#78909C' },
       },
     },
     semanticTokens: {

@@ -2,6 +2,9 @@ import type { SystemStyleObject } from '@chakra-ui/react';
 import type { GearLevel } from '../../types/weather';
 
 export const containerStyle: SystemStyleObject = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'var(--padding-sm)',
   borderRadius: 'var(--radius-md)',
   borderLeft: '4px solid',
   background: 'bg.now',
@@ -36,5 +39,6 @@ export const LEVEL_COLOR: Record<GearLevel, string> = {
   sun: 'uv.high',
   umbrella: 'rain.light',
   'wet-weather-gear': 'accent',
+  jacket: 'cold',
   windbreaker: 'rain.moderate',
 };

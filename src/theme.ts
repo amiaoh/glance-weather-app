@@ -29,14 +29,31 @@ const config: SystemConfig = {
         sage: { value: { base: '#788A57', _dark: '#9DAE72' } },
         accent: { value: { base: '#B25E3B', _dark: '#C77E56' } },
         switchOff: { value: { base: '#D8CFBF', _dark: '#4A4239' } },
+        // 5-tier severity badge ramp. "moderate" and "extreme" are the exact
+        // colors from the design file; "mild", "high", and "veryHigh" are
+        // interpolated between them (mild borrows the sage hue used
+        // elsewhere for calm/positive states) so every tier stays within
+        // the design's warm palette rather than introducing new hues.
         severity: {
-          extreme: {
-            fg: { value: { base: '#8a4a2e', _dark: '#E6A981' } },
-            bg: { value: { base: '#F4E1D4', _dark: '#3A2A21' } },
+          mild: {
+            fg: { value: { base: '#5C6B3F', _dark: '#B7C48D' } },
+            bg: { value: { base: '#E8ECDA', _dark: '#262C1C' } },
           },
           moderate: {
             fg: { value: { base: '#8a6516', _dark: '#D8B265' } },
             bg: { value: { base: '#F5E9C9', _dark: '#332B1A' } },
+          },
+          high: {
+            fg: { value: { base: '#8A5B22', _dark: '#DDAF6E' } },
+            bg: { value: { base: '#F5E6CD', _dark: '#352B1C' } },
+          },
+          veryHigh: {
+            fg: { value: { base: '#895128', _dark: '#E1AC78' } },
+            bg: { value: { base: '#F4E4D0', _dark: '#382A1F' } },
+          },
+          extreme: {
+            fg: { value: { base: '#8a4a2e', _dark: '#E6A981' } },
+            bg: { value: { base: '#F4E1D4', _dark: '#3A2A21' } },
           },
         },
         // UV colors (WHO standard)

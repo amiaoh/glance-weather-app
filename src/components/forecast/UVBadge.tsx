@@ -18,7 +18,7 @@ function getUVColor(uv: number | null): string {
 }
 
 function getUVTextColor(uv: number | null): string {
-  if (uv === null) return 'var(--text-muted)';
+  if (uv === null) return 'var(--ink3)';
   if (uv <= 7) return '#000';
   return '#fff';
 }

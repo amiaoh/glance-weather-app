@@ -15,8 +15,8 @@ html, body, #root {
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--page);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -28,7 +28,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #d7d9e2;
+    background: var(--page);
   }
 
   #root {
@@ -54,14 +54,14 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: var(--card);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: var(--ink3);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--ink2);
 }

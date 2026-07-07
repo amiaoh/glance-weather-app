@@ -4,7 +4,7 @@ export function InformativeText ({...props}:TextProps) {
   return (
     <Text
         fontSize="xs"
-        color="var(--text-muted)"
+        color="var(--ink3)"
         padding="md"
         {...props}>
             {props.children}

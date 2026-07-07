@@ -1,4 +1,4 @@
-import { GearRecommendation, HourlyForecast, RainAlert, RainLevel, UVAlert, WindAlert, WindLevel } from '../../types/weather';
+import { GearRecommendation, GearSeverity, HourlyForecast, RainAlert, RainLevel, UVAlert, WindAlert, WindLevel } from '../../types/weather';
 
 import { formatHour } from './formatters';
 
@@ -40,18 +40,6 @@ function isCurrentHour(date: Date): boolean {
 function formatAlertTime(date: Date): string {
   if (isCurrentHour(date)) return "Now";
   return `at ${formatHour(date)}`;
-}
-
-function rainSummary(alert: RainAlert): string {
-  const chance = Math.round(alert.precipitationProbability);
-  return `${chance}% chance of ${alert.level} rain ${formatAlertTime(alert.alertTime)}`;
-}
-
-function windSummary(alert: WindAlert): string {
-  if (alert.level === "strong") {
-    return `Severe wind expected ${formatAlertTime(alert.alertTime)} - stay indoors if you can`;
-  }
-  return `Breezy conditions expected ${formatAlertTime(alert.alertTime)}`;
 }
 
 function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
@@ -119,6 +107,26 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   };
 }
 
+// ARPANSA UV bands. analyzeUV only ever fires at UV >= 3, so "low" never
+// shows up as a gear card severity.
+function uvSeverity(uvValue: number): GearSeverity {
+  if (uvValue >= 11) return { tier: 'extreme', label: 'Extreme' };
+  if (uvValue >= 8) return { tier: 'veryHigh', label: 'Very High' };
+  if (uvValue >= 6) return { tier: 'high', label: 'High' };
+  return { tier: 'moderate', label: 'Moderate' };
+}
+
+function rainSeverity(level: RainLevel): GearSeverity {
+  if (level === 'heavy') return { tier: 'extreme', label: 'Heavy' };
+  if (level === 'moderate') return { tier: 'moderate', label: 'Moderate' };
+  return { tier: 'mild', label: 'Light' };
+}
+
+function windSeverity(level: WindLevel): GearSeverity {
+  if (level === 'strong') return { tier: 'extreme', label: 'Strong' };
+  return { tier: 'moderate', label: 'Moderate' };
+}
+
 // Below this, wind chill makes a jacket worth recommending even without rain.
 const JACKET_TEMP_THRESHOLD_C = 20;
 
@@ -147,8 +155,26 @@ function analyzeGear(
 ): GearRecommendation[] {
   const items: GearRecommendation[] = [];
 
+  if (uvAlert) {
+    const severity = uvSeverity(uvAlert.uvValue);
+    items.push({
+      level: 'sun',
+      label: 'Sunscreen',
+      detail: `Strong sun ${formatAlertTime(uvAlert.alertTime)}`,
+      severity,
+      stats: [
+        { label: 'Peak UV', value: `${Math.round(uvAlert.uvValue)} · ${severity.label.toLowerCase()}` },
+        { label: 'Peak time', value: formatAlertTime(uvAlert.alertTime) },
+      ],
+    });
+  }
+
   if (rainAlert) {
     const rainDefeatsUmbrella = rainAlert.level === 'heavy' || windAlert?.level === 'strong';
+    const stats: GearRecommendation['stats'] = [
+      { label: 'Rainfall', value: `${rainAlert.totalMm.toFixed(1)} mm` },
+      { label: 'Chance', value: `${Math.round(rainAlert.precipitationProbability)}% · ${formatAlertTime(rainAlert.alertTime)}` },
+    ];
 
     items.push(
       rainDefeatsUmbrella
@@ -158,11 +184,15 @@ function analyzeGear(
             detail: windAlert
               ? `${rainAlert.totalMm.toFixed(1)}mm expected with ${Math.round(windAlert.speed)}km/h wind - an umbrella won't hold up`
               : `${rainAlert.totalMm.toFixed(1)}mm of rain expected ${formatAlertTime(rainAlert.alertTime)}`,
+            severity: rainSeverity(rainAlert.level),
+            stats,
           }
         : {
             level: 'umbrella',
             label: 'Umbrella will do',
             detail: `${rainAlert.totalMm.toFixed(1)}mm expected ${formatAlertTime(rainAlert.alertTime)}`,
+            severity: rainSeverity(rainAlert.level),
+            stats,
           }
     );
   }
@@ -170,6 +200,10 @@ function analyzeGear(
   if (windAlert?.level === 'strong') {
     const windTemp = temperatureAt(hours, windAlert.alertTime);
     const isCold = windTemp !== null && windTemp <= JACKET_TEMP_THRESHOLD_C;
+    const stats: GearRecommendation['stats'] = [
+      { label: 'Wind speed', value: `${Math.round(windAlert.speed)} km/h` },
+      { label: 'Expected', value: formatAlertTime(windAlert.alertTime) },
+    ];
 
     items.push(
       isCold
@@ -177,21 +211,17 @@ function analyzeGear(
             level: 'jacket',
             label: 'Jacket recommended',
             detail: `${Math.round(windAlert.speed)}km/h wind with a top of ${Math.round(windTemp!)}° will feel colder ${formatAlertTime(windAlert.alertTime)}`,
+            severity: windSeverity(windAlert.level),
+            stats,
           }
         : {
             level: 'windbreaker',
             label: 'Secure loose items',
             detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime)}`,
+            severity: windSeverity(windAlert.level),
+            stats,
           }
     );
-  }
-
-  if (uvAlert) {
-    items.push({
-      level: 'sun',
-      label: 'Sun protection',
-      detail: `UV reaching ${Math.round(uvAlert.uvValue)} ${formatAlertTime(uvAlert.alertTime)}`,
-    });
   }
 
   if (items.length === 0) {
@@ -256,5 +286,5 @@ function findMaxUV(hours: HourlyForecast[]): {
     time: max.time,
   };
 }
-export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours, rainSummary, windSummary };
+export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours };
 

@@ -1,5 +1,6 @@
 import { Flex, IconButton, NativeSelect, Text } from '@chakra-ui/react';
 import { FiMapPin, FiNavigation, FiRefreshCw } from 'react-icons/fi';
+import { LuSlidersHorizontal } from 'react-icons/lu';
 import { AUSTRALIAN_CITIES } from '../../utils/cityCoordinates';
 import { useLocation } from '../../hooks/useLocation';
 import {
@@ -15,9 +16,10 @@ interface HeaderProps {
   lastUpdated: Date | null;
   onRefresh: () => void;
   isRefreshing: boolean;
+  onOpenSettings: () => void;
 }
 
-export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
+export function Header({ lastUpdated, onRefresh, isRefreshing, onOpenSettings }: HeaderProps) {
   const { city, isLocating, detectLocation, setCity } = useLocation();
 
   return (
@@ -68,6 +70,16 @@ export function Header({ lastUpdated, onRefresh, isRefreshing }: HeaderProps) {
           size="sm"
         >
           <FiRefreshCw />
+        </IconButton>
+        <IconButton
+          css={iconButtonStyle}
+          onClick={onOpenSettings}
+          title="Settings"
+          aria-label="Settings"
+          variant="ghost"
+          size="sm"
+        >
+          <LuSlidersHorizontal />
         </IconButton>
       </Flex>
     </Flex>

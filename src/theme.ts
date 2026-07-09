@@ -10,6 +10,14 @@ const config: SystemConfig = {
       spin: {
         to: { transform: 'rotate(360deg)' },
       },
+      scrimIn: {
+        from: { opacity: 0 },
+        to: { opacity: 1 },
+      },
+      sheetUp: {
+        from: { transform: 'translateY(100%)' },
+        to: { transform: 'translateY(0)' },
+      },
     },
     tokens: {
       colors: {

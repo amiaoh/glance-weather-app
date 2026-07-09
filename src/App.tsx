@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { spinnerStyle } from './App.styles';
 import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
@@ -5,6 +6,7 @@ import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
 import { Header } from './components/layout/Header';
 import { LocationProvider } from './components/location/LocationContext';
+import { SettingsSheet } from './components/settings/SettingsSheet';
 import { DevPreviewToggle } from './dev/DevPreviewToggle';
 import { useDevPreview } from './dev/useDevPreview';
 import { useLocation } from './hooks/useLocation';
@@ -20,6 +22,7 @@ function WeatherContent() {
     cityName: city.name,
   });
 
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { scenarioId, setScenarioId, previewData } = useDevPreview(city.name);
   const devToggle = <DevPreviewToggle scenarioId={scenarioId} onChange={setScenarioId} />;
   const data = previewData ?? liveData;
@@ -70,7 +73,12 @@ function WeatherContent() {
 
   return (
     <>
-      <Header lastUpdated={data.lastUpdated} onRefresh={refresh} isRefreshing={isLoading} />
+      <Header
+        lastUpdated={data.lastUpdated}
+        onRefresh={refresh}
+        isRefreshing={isLoading}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
       <WeatherMain data={data} />
       <NextFourHoursAlerts data={data} />
 
@@ -91,6 +99,7 @@ function WeatherContent() {
         </Box>
       )}
       {devToggle}
+      <SettingsSheet isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
   );
 }

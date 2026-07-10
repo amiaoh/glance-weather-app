@@ -16,12 +16,6 @@
   --severity-moderate-fg: #8a6516;
   --severity-moderate-bg: #F5E9C9;
 
-  /* UV Colors (WHO standard) */
-  --uv-low: #4CAF50;
-  --uv-moderate: #FFEB3B;
-  --uv-high: #FF9800;
-  --uv-very-high: #F44336;
-  --uv-extreme: #9C27B0;
 
   /* Rain colors */
   --rain-light: #64B5F6;

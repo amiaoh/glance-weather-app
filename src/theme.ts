@@ -64,14 +64,6 @@ const config: SystemConfig = {
             bg: { value: { base: '#F4E1D4', _dark: '#3A2A21' } },
           },
         },
-        // UV colors (WHO standard)
-        uv: {
-          low: { value: { base: '#4CAF50' } },
-          moderate: { value: { base: '#FFEB3B' } },
-          high: { value: { base: '#FF9800' } },
-          veryHigh: { value: { base: '#F44336' } },
-          extreme: { value: { base: '#9C27B0' } },
-        },
         rain: {
           light: { value: { base: '#64B5F6' } },
           moderate: { value: { base: '#42A5F5' } },

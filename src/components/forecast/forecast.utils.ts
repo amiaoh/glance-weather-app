@@ -229,6 +229,10 @@ function analyzeGear(
       level: 'none',
       label: 'No protection needed',
       detail: 'Clear conditions expected for the next 4 hours',
+      severity: { tier: 'mild', label: 'Clear' },
+      stats: hours.length
+        ? [{ label: 'Wind', value: `${Math.round(hours[0].windSpeed)} km/h` }]
+        : undefined,
     });
   }
 
@@ -268,23 +272,5 @@ function findMaxTemp(hours: HourlyForecast[]): {
   };
 }
 
-function findMaxUV(hours: HourlyForecast[]): {
-  value: number;
-  time: Date;
-} | null {
-  const hoursWithUV = hours.filter((h) => h.uvIndex !== null);
-  if (hoursWithUV.length === 0) return null;
-
-  let max = hoursWithUV[0];
-  for (const hour of hoursWithUV) {
-    if ((hour.uvIndex ?? 0) > (max.uvIndex ?? 0)) {
-      max = hour;
-    }
-  }
-  return {
-    value: max.uvIndex!,
-    time: max.time,
-  };
-}
-export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, findMaxUV, formatAlertTime, getNextFourHours, getTodayRemainingHours };
+export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, formatAlertTime, getNextFourHours, getTodayRemainingHours };
 

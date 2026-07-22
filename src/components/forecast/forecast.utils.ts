@@ -229,10 +229,6 @@ function analyzeGear(
       level: 'none',
       label: 'No protection needed',
       detail: 'Clear conditions expected for the next 4 hours',
-      severity: { tier: 'mild', label: 'Clear' },
-      stats: hours.length
-        ? [{ label: 'Wind', value: `${Math.round(hours[0].windSpeed)} km/h` }]
-        : undefined,
     });
   }
 

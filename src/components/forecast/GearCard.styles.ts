@@ -69,10 +69,11 @@ export const chevronStyle: SystemStyleObject = {
 };
 
 export const panelStyle: SystemStyleObject = {
-  margin: '0 18px 16px',
-  paddingTop: '14px',
   borderTop: '1px solid',
   borderColor: 'line',
+  paddingTop: '14px',
+  paddingInline: '18px',
+  paddingBottom: '16px',
   display: 'flex',
   flexDirection: 'column',
   gap: '9px',

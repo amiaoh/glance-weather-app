@@ -67,7 +67,7 @@ export const PREVIEW_SCENARIOS: PreviewScenario[] = [
     ]),
   },
   {
-    id: 'wet-weather-gear',
+    id: 'waterproof-gear',
     label: 'Heavy rain + strong wind',
     hourly: buildHours([
       { precipitation: 2, precipitationProbability: 70, weatherCode: 63, windSpeed: 25 },

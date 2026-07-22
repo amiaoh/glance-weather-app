@@ -61,6 +61,21 @@ export const badgeStyle: SystemStyleObject = {
   flexShrink: 0,
 };
 
+// UV Index badges show a bare number rather than a word, so they skip the
+// uppercase/letter-spacing treatment (which shifts numerals off-center) in
+// favor of a fixed-size circle with flex centering.
+export const uvBadgeStyle: SystemStyleObject = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '1.75rem',
+  height: '1.75rem',
+  borderRadius: '50%',
+  fontSize: '0.8125rem',
+  fontWeight: 700,
+  flexShrink: 0,
+};
+
 export const chevronStyle: SystemStyleObject = {
   marginLeft: '4px',
   color: 'ink3',

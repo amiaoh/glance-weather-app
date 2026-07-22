@@ -8,9 +8,11 @@ interface GearRecommendationProps {
 }
 
 export function GearRecommendation({ gear }: GearRecommendationProps) {
+  const hasAlerts = gear.some((item) => item.level !== 'none');
+
   return (
     <Box css={containerStyle}>
-      <Text css={labelStyle}>You'll want</Text>
+      {hasAlerts && <Text css={labelStyle}>You'll want</Text>}
       <Box css={listStyle}>
         {gear.map((item) => (
           <GearCard key={item.level} item={item} />

@@ -1,4 +1,4 @@
-import { GearRecommendation, GearSeverity, HourlyForecast, RainAlert, RainLevel, UVAlert, WindAlert, WindLevel } from '../../types/weather';
+import { GearRecommendation, GearSeverity, HourlyForecast, RainAlert, RainLevel, SeverityTier, UVAlert, WindAlert, WindLevel } from '../../types/weather';
 
 import { formatHour } from './formatters';
 
@@ -37,9 +37,33 @@ function isCurrentHour(date: Date): boolean {
   );
 }
 
-function formatAlertTime(date: Date): string {
-  if (isCurrentHour(date)) return "Now";
-  return `at ${formatHour(date)}`;
+function formatAlertTime(date: Date, options?: { lowercaseNow?: boolean; omitAt?: boolean }): string {
+  if (isCurrentHour(date)) return options?.lowercaseNow ? "now" : "Now";
+  return options?.omitAt ? formatHour(date) : `at ${formatHour(date)}`;
+}
+
+// Drops the trailing decimal once rainfall reaches double digits, where the
+// extra precision stops being meaningful.
+function formatMm(mm: number): string {
+  return mm >= 10 ? String(Math.round(mm)) : mm.toFixed(1);
+}
+
+// Last rainy hour within the window is also the window's last hour - can't
+// tell from 4 hours of data whether it stops there or keeps going.
+function rainEndTimeWithinWindow(hours: HourlyForecast[]): Date | null {
+  const sorted = [...hours].sort((a, b) => a.time.getTime() - b.time.getTime());
+  let lastRainyIndex = -1;
+  sorted.forEach((hour, index) => {
+    if (hour.precipitation > 0) lastRainyIndex = index;
+  });
+
+  if (lastRainyIndex === -1 || lastRainyIndex === sorted.length - 1) return null;
+  return sorted[lastRainyIndex + 1].time;
+}
+
+function rainDurationPhrase(hours: HourlyForecast[]): string {
+  const endTime = rainEndTimeWithinWindow(hours);
+  return endTime ? `until ${formatHour(endTime)}` : "for at least the next 4 hours";
 }
 
 function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
@@ -107,9 +131,9 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   };
 }
 
-// ARPANSA UV bands. analyzeUV only ever fires at UV >= 3, so "low" never
-// shows up as a gear card severity.
-function uvSeverity(uvValue: number): GearSeverity {
+// ARPANSA UV Index bands. analyzeUV only ever fires at UV >= 3, so "low"
+// never shows up as a gear card severity.
+function uvBand(uvValue: number): { tier: SeverityTier; label: string } {
   if (uvValue >= 11) return { tier: 'extreme', label: 'Extreme' };
   if (uvValue >= 8) return { tier: 'veryHigh', label: 'Very High' };
   if (uvValue >= 6) return { tier: 'high', label: 'High' };
@@ -156,41 +180,39 @@ function analyzeGear(
   const items: GearRecommendation[] = [];
 
   if (uvAlert) {
-    const severity = uvSeverity(uvAlert.uvValue);
+    const band = uvBand(uvAlert.uvValue);
+    const severity: GearSeverity = { tier: band.tier, label: String(Math.round(uvAlert.uvValue)), scale: 'uv' };
     items.push({
       level: 'sun',
-      label: 'Sunscreen',
-      detail: `Strong sun ${formatAlertTime(uvAlert.alertTime)}`,
+      label: 'Sunscreen and hat',
+      detail: `Peak UV ${formatAlertTime(uvAlert.alertTime, { lowercaseNow: true })}`,
       severity,
-      stats: [
-        { label: 'Peak UV', value: `${Math.round(uvAlert.uvValue)} · ${severity.label.toLowerCase()}` },
-        { label: 'Peak time', value: formatAlertTime(uvAlert.alertTime) },
-      ],
     });
   }
 
   if (rainAlert) {
     const rainDefeatsUmbrella = rainAlert.level === 'heavy' || windAlert?.level === 'strong';
+    const duration = rainDurationPhrase(hours);
+    const chanceOverWindow = Math.max(...hours.map((h) => h.precipitationProbability));
     const stats: GearRecommendation['stats'] = [
-      { label: 'Rainfall', value: `${rainAlert.totalMm.toFixed(1)} mm` },
-      { label: 'Chance', value: `${Math.round(rainAlert.precipitationProbability)}% · ${formatAlertTime(rainAlert.alertTime)}` },
+      { label: 'Chance of rain', value: `${Math.round(chanceOverWindow)}%` },
     ];
 
     items.push(
       rainDefeatsUmbrella
         ? {
-            level: 'wet-weather-gear',
-            label: 'Full wet weather gear',
+            level: 'waterproof-gear',
+            label: 'Waterproof gear',
             detail: windAlert
-              ? `${rainAlert.totalMm.toFixed(1)}mm expected with ${Math.round(windAlert.speed)}km/h wind - an umbrella won't hold up`
-              : `${rainAlert.totalMm.toFixed(1)}mm of rain expected ${formatAlertTime(rainAlert.alertTime)}`,
+              ? `${formatMm(rainAlert.totalMm)}mm ${duration}`
+              : `${formatMm(rainAlert.totalMm)}mm of rain ${duration}`,
             severity: rainSeverity(rainAlert.level),
             stats,
           }
         : {
             level: 'umbrella',
-            label: 'Umbrella will do',
-            detail: `${rainAlert.totalMm.toFixed(1)}mm expected ${formatAlertTime(rainAlert.alertTime)}`,
+            label: 'Umbrella',
+            detail: `${formatMm(rainAlert.totalMm)}mm ${duration}`,
             severity: rainSeverity(rainAlert.level),
             stats,
           }
@@ -200,24 +222,30 @@ function analyzeGear(
   if (windAlert?.level === 'strong') {
     const windTemp = temperatureAt(hours, windAlert.alertTime);
     const isCold = windTemp !== null && windTemp <= JACKET_TEMP_THRESHOLD_C;
+    const speeds = hours.map((h) => h.windSpeed);
+    const minSpeed = Math.round(Math.min(...speeds));
+    const maxSpeed = Math.round(Math.max(...speeds));
     const stats: GearRecommendation['stats'] = [
-      { label: 'Wind speed', value: `${Math.round(windAlert.speed)} km/h` },
-      { label: 'Expected', value: formatAlertTime(windAlert.alertTime) },
+      {
+        label: 'Wind speed',
+        value: minSpeed === maxSpeed ? `${maxSpeed} km/h` : `${minSpeed}-${maxSpeed} km/h`,
+      },
+      { label: 'Strongest at', value: formatAlertTime(windAlert.alertTime, { omitAt: true }) },
     ];
 
     items.push(
       isCold
         ? {
             level: 'jacket',
-            label: 'Jacket recommended',
-            detail: `${Math.round(windAlert.speed)}km/h wind with a top of ${Math.round(windTemp!)}° will feel colder ${formatAlertTime(windAlert.alertTime)}`,
+            label: 'Jacket',
+            detail: `${Math.round(windAlert.speed)}km/h wind with a top of ${Math.round(windTemp!)}° will feel colder ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
             severity: windSeverity(windAlert.level),
             stats,
           }
         : {
             level: 'windbreaker',
-            label: 'Secure loose items',
-            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime)}`,
+            label: 'Windbreaker',
+            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
             severity: windSeverity(windAlert.level),
             stats,
           }
@@ -227,8 +255,8 @@ function analyzeGear(
   if (items.length === 0) {
     items.push({
       level: 'none',
-      label: 'No protection needed',
-      detail: 'Clear conditions expected for the next 4 hours',
+      label: 'Clear conditions expected',
+      detail: 'For the next 4 hours',
     });
   }
 

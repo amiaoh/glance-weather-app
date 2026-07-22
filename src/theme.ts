@@ -69,6 +69,31 @@ const config: SystemConfig = {
           moderate: { value: { base: '#42A5F5' } },
           heavy: { value: { base: '#1E88E5' } },
         },
+        // ARPANSA UV Index bands (arpansa.gov.au) - green/yellow/orange/red/violet,
+        // distinct from the warm severity ramp above since this scale is a
+        // recognized external standard, not an app-specific tier.
+        uv: {
+          low: {
+            fg: { value: { base: '#2E7D32', _dark: '#A5D6A7' } },
+            bg: { value: { base: '#DCEDC8', _dark: '#1E3620' } },
+          },
+          moderate: {
+            fg: { value: { base: '#8F6A00', _dark: '#F0D264' } },
+            bg: { value: { base: '#FDF3C7', _dark: '#3A3110' } },
+          },
+          high: {
+            fg: { value: { base: '#B35900', _dark: '#FFA85C' } },
+            bg: { value: { base: '#FCE0C2', _dark: '#402A12' } },
+          },
+          veryHigh: {
+            fg: { value: { base: '#B0271E', _dark: '#F1897F' } },
+            bg: { value: { base: '#F8D6D3', _dark: '#3D1815' } },
+          },
+          extreme: {
+            fg: { value: { base: '#7B2D8B', _dark: '#D599E0' } },
+            bg: { value: { base: '#EEDBF3', _dark: '#331539' } },
+          },
+        },
       },
     },
   },

@@ -41,7 +41,7 @@ interface WindAlert {
   level: WindLevel;
 }
 
-type GearLevel = "none" | "sun" | "umbrella" | "wet-weather-gear" | "jacket" | "windbreaker";
+type GearLevel = "none" | "sun" | "umbrella" | "waterproof-gear" | "jacket" | "windbreaker";
 
 // Badge color tier for a gear card. Only "moderate" and "extreme" are used
 // by wind/rain today; UV uses the full range (its alert only fires at
@@ -51,6 +51,9 @@ type SeverityTier = "mild" | "moderate" | "high" | "veryHigh" | "extreme";
 interface GearSeverity {
   tier: SeverityTier;
   label: string;
+  // Set when the badge should render with the ARPANSA UV Index palette and
+  // show the numeric value instead of a word label.
+  scale?: 'uv';
 }
 
 interface GearStat {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { spinnerStyle } from './App.styles';
+import { scrollContentStyle, spinnerStyle } from './App.styles';
 import { NextFourHoursAlerts } from './components/forecast/NextFourHoursAlerts';
 import { WeatherMain } from './components/forecast/WeatherMain';
 import { AppShell } from './components/layout/AppShell';
@@ -79,8 +79,10 @@ function WeatherContent() {
         isRefreshing={isLoading}
         onOpenSettings={() => setSettingsOpen(true)}
       />
-      <WeatherMain data={data} />
-      <NextFourHoursAlerts data={data} />
+      <Box css={scrollContentStyle}>
+        <WeatherMain data={data} />
+        <NextFourHoursAlerts data={data} />
+      </Box>
 
       {error && !previewData && (
         <Box

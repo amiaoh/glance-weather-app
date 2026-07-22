@@ -108,7 +108,6 @@ export const switchRootStyle: SystemStyleObject = {
 
 export const switchControlStyle: SystemStyleObject = {
   background: 'switchOff',
-  padding: '3px',
   _checked: {
     background: 'accent',
   },

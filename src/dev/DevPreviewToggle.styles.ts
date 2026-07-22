@@ -2,9 +2,10 @@ import type { SystemStyleObject } from '@chakra-ui/react';
 
 export const toggleStyle: SystemStyleObject = {
   position: 'absolute',
-  bottom: '8px',
-  right: '8px',
-  left: '8px',
+  bottom: '12px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: 'min(220px, calc(100% - 64px))',
   zIndex: 9999,
   background: 'card',
   borderRadius: 'var(--radius-sm)',

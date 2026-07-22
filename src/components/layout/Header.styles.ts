@@ -8,6 +8,12 @@ export const headerStyle: SystemStyleObject = {
   background: 'card',
   borderBottom: '1px solid',
   borderColor: 'line',
+  // AppShell only rounds its corners (46px) at this same breakpoint - pull
+  // the side groups in further so they clear the curve instead of nearly
+  // touching it.
+  '@media (min-width: 480px)': {
+    px: '20px',
+  },
 };
 
 export const sideGroupStyle: SystemStyleObject = {

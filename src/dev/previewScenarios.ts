@@ -80,7 +80,19 @@ export const PREVIEW_SCENARIOS: PreviewScenario[] = [
   },
   {
     id: 'windbreaker',
-    label: 'Strong wind, warm - secure items',
+    label: 'Moderate wind - windbreaker',
+    hourly: buildHours([
+      { windSpeed: 15 },
+      { windSpeed: 24 },
+      { windSpeed: 32, weatherCode: 2 },
+      { windSpeed: 35 },
+      { windSpeed: 28 },
+      { windSpeed: 20 },
+    ]),
+  },
+  {
+    id: 'jacket',
+    label: 'Strong wind - jacket',
     hourly: buildHours([
       { windSpeed: 15 },
       { windSpeed: 28 },
@@ -91,27 +103,15 @@ export const PREVIEW_SCENARIOS: PreviewScenario[] = [
     ]),
   },
   {
-    id: 'jacket',
-    label: 'Strong wind, cold - jacket',
-    hourly: buildHours([
-      { windSpeed: 15, temperature: 16 },
-      { windSpeed: 28, temperature: 15 },
-      { windSpeed: 42, temperature: 14, weatherCode: 2 },
-      { windSpeed: 45, temperature: 14 },
-      { windSpeed: 35, temperature: 15 },
-      { windSpeed: 20, temperature: 16 },
-    ]),
-  },
-  {
     id: 'umbrella-and-jacket',
-    label: 'Cold rain + wind - multiple items',
+    label: 'Rain + strong wind - multiple items',
     hourly: buildHours([
-      { precipitation: 1, precipitationProbability: 50, weatherCode: 61, windSpeed: 25, temperature: 15 },
-      { precipitation: 2, precipitationProbability: 65, weatherCode: 61, windSpeed: 42, temperature: 14 },
-      { precipitation: 3, precipitationProbability: 70, weatherCode: 63, windSpeed: 45, temperature: 13 },
-      { precipitation: 1.5, precipitationProbability: 55, weatherCode: 61, windSpeed: 30, temperature: 14 },
-      { windSpeed: 20, temperature: 15 },
-      { temperature: 16 },
+      { precipitation: 1, precipitationProbability: 50, weatherCode: 61, windSpeed: 25 },
+      { precipitation: 2, precipitationProbability: 65, weatherCode: 61, windSpeed: 42 },
+      { precipitation: 3, precipitationProbability: 70, weatherCode: 63, windSpeed: 45 },
+      { precipitation: 1.5, precipitationProbability: 55, weatherCode: 61, windSpeed: 30 },
+      { windSpeed: 20 },
+      {},
     ]),
   },
   {

@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
-import { LuChevronDown, LuCircleCheck, LuCloudRainWind, LuSun, LuUmbrella, LuWind } from 'react-icons/lu';
+import { LuChevronDown, LuCircleCheck, LuCloudRainWind, LuSun, LuUmbrella } from 'react-icons/lu';
 import type { GearLevel, GearRecommendation, SeverityTier } from '../../types/weather';
 import {
   badgeStyle,
@@ -15,7 +15,6 @@ import {
   statRowStyle,
   statValueStyle,
   titleStyle,
-  uvBadgeStyle,
 } from './GearCard.styles';
 
 import { useState } from 'react';
@@ -27,7 +26,7 @@ const ICONS: Record<GearLevel, React.ComponentType> = {
   umbrella: LuUmbrella,
   'waterproof-gear': LuCloudRainWind,
   jacket: TbJacket,
-  windbreaker: LuWind,
+  windbreaker: TbJacket,
 };
 
 const SEVERITY_COLORS: Record<SeverityTier, { fg: string; bg: string }> = {
@@ -70,10 +69,9 @@ export function GearCard({ item }: GearCardProps) {
           <Text css={detailStyle}>{item.detail}</Text>
         </Box>
         {item.severity && (() => {
-          const isUV = item.severity.scale === 'uv';
-          const colors = isUV ? UV_COLORS[item.severity.tier] : SEVERITY_COLORS[item.severity.tier];
+          const colors = item.severity.scale === 'uv' ? UV_COLORS[item.severity.tier] : SEVERITY_COLORS[item.severity.tier];
           return (
-            <Text css={{ ...(isUV ? uvBadgeStyle : badgeStyle), color: colors.fg, background: colors.bg }}>
+            <Text className="severity-badge" css={{ ...badgeStyle, color: colors.fg, background: colors.bg }}>
               {item.severity.label}
             </Text>
           );

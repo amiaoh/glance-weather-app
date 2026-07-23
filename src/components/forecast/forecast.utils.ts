@@ -151,14 +151,6 @@ function windSeverity(level: WindLevel): GearSeverity {
   return { tier: 'moderate', label: 'Moderate' };
 }
 
-// Below this, wind chill makes a jacket worth recommending even without rain.
-const JACKET_TEMP_THRESHOLD_C = 20;
-
-function temperatureAt(hours: HourlyForecast[], time: Date): number | null {
-  const match = hours.find((h) => h.time.getTime() === time.getTime());
-  return match ? match.temperature : null;
-}
-
 /**
  * Synthesizes the individual UV/rain/wind alerts into practical "what should
  * I take with me" answers for the next 4 hours - can return more than one
@@ -167,9 +159,8 @@ function temperatureAt(hours: HourlyForecast[], time: Date): number | null {
  *
  * Any rain plus strong wind defeats an umbrella outright (wind blows rain
  * sideways), not just moderate-or-heavier rain - so that check isn't gated
- * on rain level. Strong wind combined with cool temperatures calls for a
- * jacket instead of just a wind warning, since wind chill is what actually
- * matters at that point.
+ * on rain level. Wind gear scales with wind level alone: moderate calls for
+ * a windbreaker, strong calls for a jacket.
  */
 function analyzeGear(
   uvAlert: UVAlert | null,
@@ -219,9 +210,7 @@ function analyzeGear(
     );
   }
 
-  if (windAlert?.level === 'strong') {
-    const windTemp = temperatureAt(hours, windAlert.alertTime);
-    const isCold = windTemp !== null && windTemp <= JACKET_TEMP_THRESHOLD_C;
+  if (windAlert) {
     const speeds = hours.map((h) => h.windSpeed);
     const minSpeed = Math.round(Math.min(...speeds));
     const maxSpeed = Math.round(Math.max(...speeds));
@@ -234,11 +223,11 @@ function analyzeGear(
     ];
 
     items.push(
-      isCold
+      windAlert.level === 'strong'
         ? {
             level: 'jacket',
             label: 'Jacket',
-            detail: `${Math.round(windAlert.speed)}km/h winds and ${Math.round(windTemp!)}°C`,
+            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
             severity: windSeverity(windAlert.level),
             stats,
           }

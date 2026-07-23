@@ -238,7 +238,7 @@ function analyzeGear(
         ? {
             level: 'jacket',
             label: 'Jacket',
-            detail: `${Math.round(windAlert.speed)}km/h wind with a top of ${Math.round(windTemp!)}° will feel colder ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
+            detail: `${Math.round(windAlert.speed)}km/h winds and ${Math.round(windTemp!)}°C`,
             severity: windSeverity(windAlert.level),
             stats,
           }

@@ -15,6 +15,7 @@ import {
   statRowStyle,
   statValueStyle,
   titleStyle,
+  uvBadgeStyle,
 } from './GearCard.styles';
 
 import { useState } from 'react';
@@ -69,9 +70,10 @@ export function GearCard({ item }: GearCardProps) {
           <Text css={detailStyle}>{item.detail}</Text>
         </Box>
         {item.severity && (() => {
-          const colors = item.severity.scale === 'uv' ? UV_COLORS[item.severity.tier] : SEVERITY_COLORS[item.severity.tier];
+          const isUV = item.severity.scale === 'uv';
+          const colors = isUV ? UV_COLORS[item.severity.tier] : SEVERITY_COLORS[item.severity.tier];
           return (
-            <Text className="severity-badge" css={{ ...badgeStyle, color: colors.fg, background: colors.bg }}>
+            <Text css={{ ...(isUV ? uvBadgeStyle : badgeStyle), color: colors.fg, background: colors.bg }}>
               {item.severity.label}
             </Text>
           );

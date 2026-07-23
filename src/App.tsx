@@ -26,6 +26,10 @@ function WeatherContent() {
   const { scenarioId, setScenarioId, previewData } = useDevPreview(city.name);
   const devToggle = <DevPreviewToggle scenarioId={scenarioId} onChange={setScenarioId} />;
   const data = previewData ?? liveData;
+  // liveData still holds the previous city's forecast until the new
+  // fetch resolves - gate the gear warnings behind a skeleton so they
+  // don't show advice for the wrong location while it loads.
+  const isSwitchingLocation = isLoading && !!data && data.city !== city.name;
 
   if (isLoading && !data) {
     return (
@@ -81,7 +85,7 @@ function WeatherContent() {
       />
       <Box css={scrollContentStyle}>
         <WeatherMain data={data} />
-        <NextFourHoursAlerts data={data} />
+        <NextFourHoursAlerts data={data} isLoading={isSwitchingLocation} />
       </Box>
 
       {error && !previewData && (

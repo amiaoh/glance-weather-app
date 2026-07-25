@@ -1,16 +1,16 @@
-import { GearRecommendation, GearSeverity, HourlyForecast, RainAlert, RainLevel, SeverityTier, UVAlert, WindAlert, WindLevel } from '../../types/weather';
+import { ColdAlert, GearRecommendation, GearSeverity, HourlyForecast, RainAlert, RainLevel, SeverityTier, UVAlert, WarningThresholds, WindAlert, WindLevel } from '../../types/weather';
 
 import { formatHour } from './formatters';
 
-function getWindLevel(speed: number): WindLevel | "light" {
-  if (speed >= 40) return "strong";
-  if (speed >= 20) return "moderate";
+function getWindLevel(speed: number, thresholds: WarningThresholds): WindLevel | "light" {
+  if (speed >= thresholds.windStrongFromKmh) return "strong";
+  if (speed >= thresholds.windModerateFromKmh) return "moderate";
   return "light";
 }
 
-function getRainLevel(totalMm: number): RainLevel {
-  if (totalMm >= 10) return "heavy";
-  if (totalMm >= 2.5) return "moderate";
+function getRainLevel(totalMm: number, thresholds: WarningThresholds): RainLevel {
+  if (totalMm >= thresholds.rainHeavyFromMm) return "heavy";
+  if (totalMm >= thresholds.rainModerateFromMm) return "moderate";
   return "light";
 }
 
@@ -81,7 +81,21 @@ function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
   };
 }
 
-function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
+function analyzeCold(hours: HourlyForecast[], thresholds: WarningThresholds): ColdAlert | null {
+  const sorted = [...hours].sort(
+    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
+  const earliest = sorted.find((h) => h.temperature <= thresholds.coldBelowC);
+
+  if (!earliest) return null;
+
+  return {
+    tempValue: earliest.temperature,
+    alertTime: earliest.time,
+  };
+}
+
+function analyzeRain(hours: HourlyForecast[], thresholds: WarningThresholds): RainAlert | null {
   const hoursWithRain = hours.filter((h) => h.precipitation > 0);
   if (hoursWithRain.length === 0) return null;
 
@@ -90,12 +104,12 @@ function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
   );
 
   const moderateOrHeavier = sorted.find(
-    (h) => getRainLevel(h.precipitation) !== "light"
+    (h) => getRainLevel(h.precipitation, thresholds) !== "light"
   );
 
   // Prefer the earliest moderate+ rain; fall back to the earliest light rain
   const alertHour = moderateOrHeavier || sorted[0];
-  const level = getRainLevel(alertHour.precipitation);
+  const level = getRainLevel(alertHour.precipitation, thresholds);
 
   const totalMm = hours.reduce((sum, h) => sum + h.precipitation, 0);
 
@@ -109,7 +123,7 @@ function analyzeRain(hours: HourlyForecast[]): RainAlert | null {
   };
 }
 
-function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
+function analyzeWind(hours: HourlyForecast[], thresholds: WarningThresholds): WindAlert | null {
   if (hours.length === 0) return null;
 
   const sorted = [...hours].sort(
@@ -119,15 +133,15 @@ function analyzeWind(hours: HourlyForecast[]): WindAlert | null {
   // Prefer the earliest strong wind hour over the earliest moderate one, so a
   // window that ramps from moderate to strong doesn't get stuck reporting
   // the milder onset - the gear recommendation depends on catching "strong".
-  const strongest = sorted.find((h) => getWindLevel(h.windSpeed) === "strong");
-  const alertHour = strongest || sorted.find((h) => getWindLevel(h.windSpeed) === "moderate");
+  const strongest = sorted.find((h) => getWindLevel(h.windSpeed, thresholds) === "strong");
+  const alertHour = strongest || sorted.find((h) => getWindLevel(h.windSpeed, thresholds) === "moderate");
 
   if (!alertHour) return null;
 
   return {
     speed: alertHour.windSpeed,
     alertTime: alertHour.time,
-    level: getWindLevel(alertHour.windSpeed) as WindLevel,
+    level: getWindLevel(alertHour.windSpeed, thresholds) as WindLevel,
   };
 }
 
@@ -152,20 +166,23 @@ function windSeverity(level: WindLevel): GearSeverity {
 }
 
 /**
- * Synthesizes the individual UV/rain/wind alerts into practical "what should
- * I take with me" answers for the next 4 hours - can return more than one
- * (e.g. umbrella + jacket on a cold rainy day). Always returns at least one
- * item; falls back to a "none" entry when nothing applies.
+ * Synthesizes the individual UV/rain/wind/cold alerts into practical "what
+ * should I take with me" answers for the next 4 hours - can return more than
+ * one (e.g. umbrella + jacket on a cold rainy day). Always returns at least
+ * one item; falls back to a "none" entry when nothing applies.
  *
  * Any rain plus strong wind defeats an umbrella outright (wind blows rain
  * sideways), not just moderate-or-heavier rain - so that check isn't gated
  * on rain level. Wind gear scales with wind level alone: moderate calls for
- * a windbreaker, strong calls for a jacket.
+ * a windbreaker, strong calls for a jacket. Cold weather also calls for a
+ * jacket regardless of wind, so a cold alert alongside any wind alert merges
+ * into a single jacket card rather than two separate ones.
  */
 function analyzeGear(
   uvAlert: UVAlert | null,
   rainAlert: RainAlert | null,
   windAlert: WindAlert | null,
+  coldAlert: ColdAlert | null,
   hours: HourlyForecast[]
 ): GearRecommendation[] {
   const items: GearRecommendation[] = [];
@@ -210,35 +227,40 @@ function analyzeGear(
     );
   }
 
-  if (windAlert) {
-    const speeds = hours.map((h) => h.windSpeed);
-    const minSpeed = Math.round(Math.min(...speeds));
-    const maxSpeed = Math.round(Math.max(...speeds));
-    const stats: GearRecommendation['stats'] = [
-      {
-        label: 'Wind speed',
-        value: minSpeed === maxSpeed ? `${maxSpeed} km/h` : `${minSpeed}-${maxSpeed} km/h`,
-      },
-      { label: 'Strongest at', value: formatAlertTime(windAlert.alertTime, { omitAt: true }) },
-    ];
+  if (windAlert || coldAlert) {
+    const isJacketWorthy = !!coldAlert || windAlert?.level === 'strong';
+    const stats: GearRecommendation['stats'] = [];
 
-    items.push(
-      windAlert.level === 'strong'
-        ? {
-            level: 'jacket',
-            label: 'Jacket',
-            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
-            severity: windSeverity(windAlert.level),
-            stats,
-          }
-        : {
-            level: 'windbreaker',
-            label: 'Windbreaker',
-            detail: `Gusts up to ${Math.round(windAlert.speed)}km/h expected ${formatAlertTime(windAlert.alertTime, { lowercaseNow: true })}`,
-            severity: windSeverity(windAlert.level),
-            stats,
-          }
-    );
+    if (windAlert) {
+      const speeds = hours.map((h) => h.windSpeed);
+      const minSpeed = Math.round(Math.min(...speeds));
+      const maxSpeed = Math.round(Math.max(...speeds));
+      stats.push(
+        {
+          label: 'Wind speed',
+          value: minSpeed === maxSpeed ? `${maxSpeed} km/h` : `${minSpeed}-${maxSpeed} km/h`,
+        },
+        { label: 'Strongest at', value: formatAlertTime(windAlert.alertTime, { omitAt: true }) }
+      );
+    }
+    if (coldAlert) {
+      stats.push({ label: 'Low', value: `${Math.round(coldAlert.tempValue)}°C` });
+    }
+
+    const detail =
+      coldAlert && windAlert
+        ? `${Math.round(windAlert.speed)}km/h winds and ${Math.round(coldAlert.tempValue)}°C`
+        : coldAlert
+          ? `${Math.round(coldAlert.tempValue)}°C expected ${formatAlertTime(coldAlert.alertTime, { lowercaseNow: true })}`
+          : `Gusts up to ${Math.round(windAlert!.speed)}km/h expected ${formatAlertTime(windAlert!.alertTime, { lowercaseNow: true })}`;
+
+    items.push({
+      level: isJacketWorthy ? 'jacket' : 'windbreaker',
+      label: isJacketWorthy ? 'Jacket' : 'Windbreaker',
+      detail,
+      severity: windAlert ? windSeverity(windAlert.level) : { tier: 'moderate', label: 'Cold' },
+      stats,
+    });
   }
 
   if (items.length === 0) {
@@ -285,5 +307,5 @@ function findMaxTemp(hours: HourlyForecast[]): {
   };
 }
 
-export { analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, formatAlertTime, getNextFourHours, getTodayRemainingHours };
+export { analyzeCold, analyzeGear, analyzeRain, analyzeUV, analyzeWind, findMaxTemp, formatAlertTime, getNextFourHours, getTodayRemainingHours };
 

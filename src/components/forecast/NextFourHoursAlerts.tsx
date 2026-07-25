@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
+import { useThresholds } from '../../hooks/useThresholds';
 import type { WeatherData } from '../../types/weather';
-import { analyzeGear, analyzeRain, analyzeUV, analyzeWind, getNextFourHours } from './forecast.utils';
+import { analyzeCold, analyzeGear, analyzeRain, analyzeUV, analyzeWind, getNextFourHours } from './forecast.utils';
 import { GearRecommendation } from './GearRecommendation';
 import { GearRecommendationSkeleton } from './GearRecommendationSkeleton';
 
@@ -12,14 +13,17 @@ interface AlertsProps {
 }
 
 export function NextFourHoursAlerts({ data, isLoading }: AlertsProps) {
+  const { thresholds } = useThresholds();
+
   const gear = useMemo(() => {
     const nextFourHours = getNextFourHours(data.hourly);
     const uv = analyzeUV(nextFourHours);
-    const rain = analyzeRain(nextFourHours);
-    const wind = analyzeWind(nextFourHours);
+    const rain = analyzeRain(nextFourHours, thresholds);
+    const wind = analyzeWind(nextFourHours, thresholds);
+    const cold = analyzeCold(nextFourHours, thresholds);
 
-    return analyzeGear(uv, rain, wind, nextFourHours);
-  }, [data.hourly]);
+    return analyzeGear(uv, rain, wind, cold, nextFourHours);
+  }, [data.hourly, thresholds]);
 
   if (isLoading) {
     return <GearRecommendationSkeleton />;

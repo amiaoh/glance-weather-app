@@ -103,6 +103,30 @@ export const PREVIEW_SCENARIOS: PreviewScenario[] = [
     ]),
   },
   {
+    id: 'cold',
+    label: 'Cold, no wind - jacket',
+    hourly: buildHours([
+      { temperature: 18 },
+      { temperature: 16 },
+      { temperature: 15, weatherCode: 2 },
+      { temperature: 15 },
+      { temperature: 16 },
+      { temperature: 17 },
+    ]),
+  },
+  {
+    id: 'cold-and-wind',
+    label: 'Cold + moderate wind - merged jacket',
+    hourly: buildHours([
+      { temperature: 18, windSpeed: 15 },
+      { temperature: 16, windSpeed: 24 },
+      { temperature: 14, windSpeed: 28, weatherCode: 2 },
+      { temperature: 14, windSpeed: 25 },
+      { temperature: 15, windSpeed: 20 },
+      { temperature: 16, windSpeed: 15 },
+    ]),
+  },
+  {
     id: 'umbrella-and-jacket',
     label: 'Rain + strong wind - multiple items',
     hourly: buildHours([

@@ -14,9 +14,17 @@ const config: SystemConfig = {
         from: { opacity: 0 },
         to: { opacity: 1 },
       },
+      scrimOut: {
+        from: { opacity: 1 },
+        to: { opacity: 0 },
+      },
       sheetUp: {
         from: { transform: 'translateY(100%)' },
         to: { transform: 'translateY(0)' },
+      },
+      sheetDown: {
+        from: { transform: 'translateY(0)' },
+        to: { transform: 'translateY(100%)' },
       },
     },
     tokens: {

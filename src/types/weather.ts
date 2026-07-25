@@ -1,4 +1,4 @@
-export type { GearLevel, GearRecommendation, GearSeverity, GearStat, HourlyForecast, RainAlert, RainLevel, SeverityTier, UVAlert, WeatherData, WindAlert, WindLevel };
+export type { ColdAlert, GearLevel, GearRecommendation, GearSeverity, GearStat, HourlyForecast, RainAlert, RainLevel, SeverityTier, UVAlert, WarningThresholds, WeatherData, WindAlert, WindLevel };
 
  interface HourlyForecast {
   time: Date;
@@ -24,6 +24,19 @@ type RainLevel = "light" | "moderate" | "heavy";
 interface UVAlert {
   uvValue: number;
   alertTime: Date;
+}
+
+interface ColdAlert {
+  tempValue: number;
+  alertTime: Date;
+}
+
+interface WarningThresholds {
+  coldBelowC: number;
+  rainModerateFromMm: number;
+  rainHeavyFromMm: number;
+  windModerateFromKmh: number;
+  windStrongFromKmh: number;
 }
 
 interface RainAlert {

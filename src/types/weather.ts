@@ -22,8 +22,10 @@ type WindLevel = "moderate" | "strong";
 type RainLevel = "light" | "moderate" | "heavy";
 
 interface UVAlert {
-  uvValue: number;
-  alertTime: Date;
+  currentValue: number;
+  peakValue: number;
+  peakTime: Date;
+  peakIsNow: boolean;
 }
 
 interface ColdAlert {
@@ -49,9 +51,11 @@ interface RainAlert {
 }
 
 interface WindAlert {
-  speed: number;
   alertTime: Date;
+  maxSpeed: number;
+  maxSpeedTime: Date;
   level: WindLevel;
+  windyThroughout: boolean;
 }
 
 type GearLevel = "none" | "sun" | "umbrella" | "waterproof-gear" | "jacket" | "windbreaker";

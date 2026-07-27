@@ -67,17 +67,23 @@ function rainDurationPhrase(hours: HourlyForecast[]): string {
 }
 
 function analyzeUV(hours: HourlyForecast[]): UVAlert | null {
-  // Find earliest hour where UV >= 3 (requires sun protection)
   const sorted = [...hours].sort(
     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
   );
-  const earliest = sorted.find((h) => h.uvIndex !== null && h.uvIndex >= 3);
+  const validHours = sorted.filter((h): h is HourlyForecast & { uvIndex: number } => h.uvIndex !== null);
+  if (validHours.length === 0) return null;
 
-  if (!earliest) return null;
+  const currentHour = validHours[0];
+  const peakHour = validHours.reduce((max, h) => (h.uvIndex > max.uvIndex ? h : max));
+
+  // Only surfaces once UV reaches a level that actually calls for sun protection.
+  if (peakHour.uvIndex < 3) return null;
 
   return {
-    uvValue: earliest.uvIndex!,
-    alertTime: earliest.time,
+    currentValue: currentHour.uvIndex,
+    peakValue: peakHour.uvIndex,
+    peakTime: peakHour.time,
+    peakIsNow: isCurrentHour(peakHour.time),
   };
 }
 
@@ -130,18 +136,21 @@ function analyzeWind(hours: HourlyForecast[], thresholds: WarningThresholds): Wi
     (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
   );
 
-  // Prefer the earliest strong wind hour over the earliest moderate one, so a
-  // window that ramps from moderate to strong doesn't get stuck reporting
-  // the milder onset - the gear recommendation depends on catching "strong".
-  const strongest = sorted.find((h) => getWindLevel(h.windSpeed, thresholds) === "strong");
-  const alertHour = strongest || sorted.find((h) => getWindLevel(h.windSpeed, thresholds) === "moderate");
+  // Onset: earliest hour that crosses the moderate threshold at all.
+  const onsetHour = sorted.find((h) => getWindLevel(h.windSpeed, thresholds) !== "light");
+  if (!onsetHour) return null;
 
-  if (!alertHour) return null;
+  // Peak: the windiest hour in the window, which may be later than onset -
+  // a window that ramps from moderate to strong should report the true max,
+  // not get stuck on whatever onset happened to hit first.
+  const peakHour = sorted.reduce((max, h) => (h.windSpeed > max.windSpeed ? h : max));
 
   return {
-    speed: alertHour.windSpeed,
-    alertTime: alertHour.time,
-    level: getWindLevel(alertHour.windSpeed, thresholds) as WindLevel,
+    alertTime: onsetHour.time,
+    maxSpeed: peakHour.windSpeed,
+    maxSpeedTime: peakHour.time,
+    level: getWindLevel(peakHour.windSpeed, thresholds) as WindLevel,
+    windyThroughout: sorted.every((h) => getWindLevel(h.windSpeed, thresholds) !== "light"),
   };
 }
 
@@ -188,12 +197,15 @@ function analyzeGear(
   const items: GearRecommendation[] = [];
 
   if (uvAlert) {
-    const band = uvBand(uvAlert.uvValue);
-    const severity: GearSeverity = { tier: band.tier, label: String(Math.round(uvAlert.uvValue)), scale: 'uv' };
+    const band = uvBand(uvAlert.peakValue);
+    const severity: GearSeverity = { tier: band.tier, label: String(Math.round(uvAlert.currentValue)), scale: 'uv' };
+    const detail = uvAlert.peakIsNow
+      ? 'UV will not get higher than this today'
+      : `Current UV ${Math.round(uvAlert.currentValue)}, peak UV ${Math.round(uvAlert.peakValue)} ${formatAlertTime(uvAlert.peakTime, { lowercaseNow: true })}`;
     items.push({
       level: 'sun',
       label: 'Sunscreen and hat',
-      detail: `Peak UV ${formatAlertTime(uvAlert.alertTime, { lowercaseNow: true })}`,
+      detail,
       severity,
     });
   }
@@ -231,28 +243,24 @@ function analyzeGear(
     const isJacketWorthy = !!coldAlert || windAlert?.level === 'strong';
     const stats: GearRecommendation['stats'] = [];
 
+    let windRangeLabel = '';
     if (windAlert) {
-      const speeds = hours.map((h) => h.windSpeed);
-      const minSpeed = Math.round(Math.min(...speeds));
-      const maxSpeed = Math.round(Math.max(...speeds));
+      const minSpeed = Math.round(Math.min(...hours.map((h) => h.windSpeed)));
+      const maxSpeed = Math.round(windAlert.maxSpeed);
+      windRangeLabel = minSpeed === maxSpeed ? `${maxSpeed} km/h` : `${minSpeed}-${maxSpeed} km/h`;
       stats.push(
-        {
-          label: 'Wind speed',
-          value: minSpeed === maxSpeed ? `${maxSpeed} km/h` : `${minSpeed}-${maxSpeed} km/h`,
-        },
-        { label: 'Strongest at', value: formatAlertTime(windAlert.alertTime, { omitAt: true }) }
+        { label: 'Strongest at', value: formatAlertTime(windAlert.maxSpeedTime, { omitAt: true }) }
       );
-    }
-    if (coldAlert) {
-      stats.push({ label: 'Low', value: `${Math.round(coldAlert.tempValue)}°C` });
     }
 
     const detail =
       coldAlert && windAlert
-        ? `${Math.round(windAlert.speed)}km/h winds and ${Math.round(coldAlert.tempValue)}°C`
+        ? `${Math.round(windAlert.maxSpeed)}km/h winds and ${Math.round(coldAlert.tempValue)}°C`
         : coldAlert
-          ? `${Math.round(coldAlert.tempValue)}°C expected ${formatAlertTime(coldAlert.alertTime, { lowercaseNow: true })}`
-          : `Gusts up to ${Math.round(windAlert!.speed)}km/h expected ${formatAlertTime(windAlert!.alertTime, { lowercaseNow: true })}`;
+          ? `${Math.round(coldAlert.tempValue)}°C ${formatAlertTime(coldAlert.alertTime, { lowercaseNow: true })}`
+          : windAlert!.windyThroughout
+            ? `Wind speed ${windRangeLabel} for the next 4 hours`
+            : `Wind up to ${Math.round(windAlert!.maxSpeed)}km/h ${formatAlertTime(windAlert!.alertTime, { lowercaseNow: true })}`;
 
     items.push({
       level: isJacketWorthy ? 'jacket' : 'windbreaker',
